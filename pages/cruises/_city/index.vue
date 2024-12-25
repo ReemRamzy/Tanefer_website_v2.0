@@ -1,0 +1,435 @@
+<!-- eslint-disable vue/no-v-html -->
+<template>
+  <v-container fluid>
+    <v-snackbar
+      v-model="snackbar"
+      :color="color"
+      :timeout="5000"
+      top
+    >
+      <v-row>
+        <span v-html="text" />
+        <v-spacer />
+        <v-icon small color="white" class="ml-3" @click="snackbar = false">
+          mdi-close
+        </v-icon>
+      </v-row>
+    </v-snackbar>
+    <v-container>
+      <template v-if="!loading && cruises.length">
+        <v-card v-for="item in cruises" :key="item.id" max-width="1200" class="mb-5 px-3 mx-auto">
+          <v-row>
+            <v-col cols="12" md="5">
+              <v-img :src="item.master_image" height="270" class="rounded" contain/>
+            </v-col>
+            <v-col cols="12" md="7" class="d-flex flex-column justify-space-between">
+              <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
+                {{ item.name }} test
+                <v-rating
+                  background-color="green lighten-2"
+                  color="warning"
+                  dense
+                  empty-icon="mdi-star-outline"
+                  full-icon="mdi-star"
+                  length="5"
+                  readonly
+                  size="10"
+                  :value="item.stars"
+                />
+              </v-card-title>
+              <v-card-subtitle class="py-0 px-0 my-1">
+                sort: {{ item.sort_cruise }}
+                Cruise Line: {{ item.cruise_line }} / Ship: {{ item.ship_name }} / Nights: {{ item.number_of_nights }}
+              </v-card-subtitle>
+              <div class="more-text">
+                <!-- eslint-disable-next-line vue/html-self-closing -->
+                <p v-html="item.description"></p>
+              </div>
+              <div>
+                <v-btn
+                  color="blue"
+                  dark
+                  text
+                  x-small
+                  class="px-0 mb-5"
+                  @click="textDialog = true; description = item.description"
+                >
+                  show Full Description
+                </v-btn>
+              </div>
+
+              <!-- <v-expansion-panels v-if="item.available_dates.length">
+                <v-expansion-panel>
+                  <v-expansion-panel-header class="pa-1">
+                    <h6>This Crusise is available to book during the following dates:</h6>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <div v-for="(season, k) in item.available_dates" :key="k">
+                      <p><strong>From</strong> {{ season.start_date }} <strong>To</strong> {{ season.end_date }} </p>
+                    </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels> -->
+              <v-card-actions class="pb-0">
+                <v-btn color="primary white--text px-5" elevation="0" :loading="showDetailsLoading" @click="getCruise(item.id)">
+                  View Details
+                </v-btn>
+                <v-spacer />
+                <v-btn color="lightBrown white--text px-10" elevation="0" :disabled="selectLoading" @click="selectCruise(item.id, item.name)">
+                  Select
+                </v-btn>
+              </v-card-actions>
+            </v-col>
+          </v-row>
+        </v-card>
+      </template>
+      <template v-else-if="!loading && !cruises.length">
+        <p class="text-center text-h6">
+          No Cruises Found!
+        </p>
+      </template>
+      <template v-else>
+        <v-progress-linear
+          indeterminate
+          color="yellow darken-2"
+        />
+      </template>
+    </v-container>
+
+    <v-dialog v-if="cruise" v-model="showCruiseDialog" max-width="1200">
+      <v-card class="mx-auto" max-width="1200">
+        <v-card-title class="lightBrown white--text">
+          {{ cruise.name }}
+        </v-card-title>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <!-- height="400" -->
+              <v-img :src="image" width="100%" class="rounded" />
+            </v-col>
+            <v-col cols="12" class="d-flex flex-wrap">
+              <v-img
+                v-for="(item, i) in cruise.images"
+                :key="i"
+                :src="item.image"
+                height="70"
+                width="70"
+                class="rounded ma-1 gallery-image "
+                @click="image = item.image"
+              />
+            </v-col>
+          </v-row>
+          <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
+            {{ cruise.name }}
+            <v-rating
+              background-color="green lighten-2"
+              color="warning"
+              dense
+              empty-icon="mdi-star-outline"
+              full-icon="mdi-star"
+              length="5"
+              readonly
+              size="15"
+              :value="cruise.stars"
+            />
+          </v-card-title>
+          <v-card-subtitle class="py-0 px-0 my-1">sort:  {{ cruise.sort_cruise }} /Cruise Line: {{ cruise.cruise_line }} / Ship: {{ cruise.ship_name }} / Nights: {{ cruise.number_of_nights }} / Cities:
+            <span v-for="(item, i) in cruise.cities" :key="i">{{ item.name + ', ' }}</span>
+          </v-card-subtitle>
+          <v-card-text class="px-0">
+            <!-- eslint-disable-next-line vue/html-self-closing -->
+            <div v-html="cruise.description"></div>
+          </v-card-text>
+          <!-- <div v-if="cruise.available_dates.length">
+            <h6>This Crusise is available to book during the following dates:</h6>
+            <div v-for="(season, k) in cruise.available_dates" :key="k">
+              <p><strong>From</strong> {{ new Date(season.start_date.replaceAll('-', '/')).toDateString() }} <strong>To</strong> {{ new Date(season.end_date.replaceAll('-', '/')).toDateString() }} </p>
+            </div>
+          </div> -->
+          <div v-if="cruise.includes.length">
+            <p class="text-h6">
+              Includes test test
+            </p>
+            <v-chip v-for="(item, i) in cruise.includes" :key="i" class="ma-1 mobile-chip-font">
+              {{ item }}
+            </v-chip>
+          </div>
+          <div v-if="cruise.excludes.length">
+            <p class="text-h6">
+              Excludes
+            </p>
+            <v-chip v-for="(item, i) in cruise.excludes" :key="i" class="ma-1 mobile-chip-font">
+              {{ item }}
+            </v-chip>
+          </div>
+          <div v-if="cruise.facilities.length">
+            <p class="text-h6">
+              Facilities
+            </p>
+            <v-chip v-for="(item, i) in cruise.facilities" :key="i" class="ma-1 mobile-chip-font">
+              {{ item }}
+            </v-chip>
+          </div>
+          <div v-if="cruise.policies.length">
+            <p class="text-h6">
+              Policies
+            </p>
+            <v-chip v-for="(item, i) in cruise.policies" :key="i" class="ma-1 mobile-chip-font">
+              {{ item }}
+            </v-chip>
+          </div>
+          <div v-if="cruise.start_days.length">
+            <p class="text-h6">
+              Start Days
+            </p>
+            <v-chip v-for="(item, i) in cruise.start_days" :key="i" class="ma-1 mobile-chip-font">
+              {{ item }}
+            </v-chip>
+          </div>
+          <v-card-actions class="pb-0">
+            <v-spacer />
+            <v-btn color="lightBrown white--text px-10" elevation="0" :disabled="selectLoading" @click="selectCruise(cruise.id, cruise.name)">
+              Select
+            </v-btn>
+          </v-card-actions>
+        </v-container>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="textDialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Cruise Overview
+        </v-card-title>
+
+        <v-card-text>
+          <p v-html="description" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import cruisesServices from '~/services/cruisesServices'
+
+export default {
+  beforeRouteUpdate (to) {
+    this.$route.query.page = to.query.page
+    this.getCruises(to.query.page)
+  },
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['page'],
+  data () {
+    return {
+      cruises: [],
+      cruise: null,
+      city: {},
+      totalPages: 1,
+      currentPage: 1,
+      loading: true,
+      showCruiseDialog: false,
+      showDetailsLoading: false,
+      image: '',
+      // sort: '',
+      color: '',
+      snackbar: false,
+      text: '',
+      selectLoading: false,
+      textDialog: false,
+      description: '',
+      metaData: {
+        page_name: null,
+        seo_title: null,
+        seo_description: null,
+        featured_image: null,
+        slug: null
+      }
+    }
+  },
+  async fetch () {
+    // await this.getMetaData()
+    await this.getCruises(this.$route.query.page)
+  },
+  head () {
+    return {
+      // title: 'Nile cruises in ' + this.$route.params.city
+      title: this.metaData.seo_title,
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.metaData.seo_description
+        },
+        {
+          hid: 'og:title',
+          property: 'og:title',
+          content: this.metaData.seo_title
+        },
+        {
+          hid: 'og:description',
+          property: 'og:description',
+          content: this.metaData.seo_description
+        },
+        {
+          hid: 'og:image',
+          property: 'og:image',
+          content: this.metaData.featured_image
+        }
+      ]
+    }
+  },
+  computed: {
+    ...mapState(['tripsCity', 'cities'])
+  },
+  async created () {
+    await this.getMetaData()
+  },
+  methods: {
+    selectCruise (id, name) {
+      // eslint-disable-next-line no-console
+      console.log(id, name)
+      this.$router.push({ name: 'cruises-city-id', params: { id, city: this.$route.params.city }, query: { cruise: name } })
+    },
+    async getCruises (page) {
+      try {
+        let cityId
+        // this.$route.query.cityId ? cityId = this.$route.query.cityId : cityId = this.cities.find(city => city.CityName === this.$route.params.city).CityID
+        this.$route.query.cityId ? cityId = this.$route.query.cityId : cityId = this.cities.find(city => city.citySlug === this.$route.params.city).CityID
+        const promise = cruisesServices.getCityCruises(cityId, parseInt(page) || 1, 10)
+        const response = await promise
+        const results = response.data
+        // eslint-disable-next-line no-console
+        // console.log(results.data.cruiseList)
+        // console.log(this.$route.query.cityId)
+        if (results.data.cruiseList.length > 0) {
+          this.cruises = results.data.cruiseList
+        } else { this.loading = false }
+      } catch (error) {
+        this.snackbar = true
+        this.color = 'error'
+        this.text = 'Something went wrong'
+      } finally {
+        this.loading = false
+      }
+    },
+    async getCruise (id) {
+      try {
+        const promise = cruisesServices.getCruiseDetails(id)
+        const response = await promise
+        const results = response.data
+        this.cruise = results.data
+        this.image = results.data.master_image
+        // this.sort_cruise = results.data.sort_cruise
+        this.showCruiseDialog = true
+      } catch (error) {
+        this.snackbar = true
+        this.color = 'error'
+        this.text = 'Something went wrong'
+        this.loading = false
+      } finally {
+        this.showDetailsLoading = false
+      }
+    },
+    changePage (page) {
+      this.$router.push({ name: 'cruisesResults', query: { page } })
+    },
+    // async getMetaData () {
+    //   try {
+    //     const promise = cruisesServices.getMetaData(5)
+    //     const response = await promise
+    //     const results = response.data
+    //     // console.log(results)
+    //     if (results.data) {
+    //       this.metaData = results.data
+    //     }
+    //   } catch (error) {
+    //     this.loaded = false
+    //   }
+    // }
+    async getMetaData () {
+      try {
+        const getCityDetails = this.cities.find(city => city.citySlug === this.$route.params.city)
+        // console.log(getCityDetails)
+        if (getCityDetails) {
+          this.metaData.seo_title = getCityDetails.citySEOTitle ? 'Best Nile River Cruises & ' + getCityDetails.citySEOTitle : null
+          this.metaData.seo_description = getCityDetails.citySEODescription ? 'Best Nile River Cruises & ' + getCityDetails.citySEODescription : null
+          this.metaData.featured_image = getCityDetails.citySEOImage ? getCityDetails.citySEOImage : null
+          this.metaData.slug = getCityDetails.citySlug
+        } else if (this.$route.params.city) {
+          const res = cruisesServices.getCityDetails(this.$route.params.city)
+          const results = await res
+          const cityDetails = results.data.data
+          this.metaData.seo_title = cityDetails.citySEOTitle ? 'Best Custom ' + cityDetails.citySEOTitle : null
+          this.metaData.seo_description = cityDetails.citySEODescription ? 'Best Custom ' + cityDetails.citySEODescription : null
+          this.metaData.featured_image = cityDetails.citySEOImage ? cityDetails.citySEOImage : null
+          this.metaData.slug = cityDetails.citySlug
+        } else {
+          const promise = cruisesServices.getMetaData(5)
+          const response = await promise
+          const results = response.data
+          if (results.data) {
+            this.metaData = results.data
+          }
+        }
+      } catch (error) {
+        this.loaded = false
+      }
+    }
+  }
+}
+</script>
+
+<style>
+.anchor[data-v-45f35f38] {
+  text-align: left;
+  padding: 0;
+  font-size: smaller;
+}
+.gallery-image {
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+.gallery-image:hover {
+  transform: scale(1.1);
+}
+.w-nav {
+  z-index: 200;
+}
+.more-text {
+  height: 44px;
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  /* ::v-deep .v-slide-group__wrapper {
+    contain: content;
+    display: list-item;
+    flex: 1 1 auto;
+    overflow: hidden;
+} */
+::v-deep .v-slide-group__wrapper {
+    contain: content;
+    /* display: flex; */
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+/* ::deep .v-image__image--cover {
+    background-size: contain !important;
+} */
+.mobile-version-frame {
+   margin: 0px;
+   padding: 0px;
+}
+.v-application .pa-3 {
+    padding: 3px !important;
+}
+
+.mobile-chip-font {
+  font-size: 11px !important;
+}
+}
+</style>
