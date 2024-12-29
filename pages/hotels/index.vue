@@ -410,7 +410,17 @@
             </v-col>
             <!-- Main Content (col-8) -->
             <v-col cols="12" md="9">
-              <v-card class="pa-3">
+              <v-card v-if="noAvailability" ref="NoAvailabilityContainer" class="pa-3">
+                <div class="d-flex justify-center align-center">
+                  <v-icon large color="error">
+                    mdi-alert-circle-outline
+                  </v-icon>
+                  <p class="text-subtitle-1 mt-2 ml-2 pt-2">
+                    We’re sorry, but no availability was found.
+                  </p>
+                </div>
+              </v-card>
+              <v-card v-else ref="resultsContainer" class="pa-3 results-container">
                 <h3>Available Hotels</h3>
                 <div v-for="(hotel, h) in filteredHotels" :key="h">
                   <!-- Hotel Card -->
@@ -900,9 +910,12 @@
               </v-card>
             </v-col>
           </v-row>
-          <div class="d-flex justify-space-between">
+          <div class="d-flex justify-space-between mt-4 mb-1">
             <button
               :disabled="pagination.current_page <= 1"
+              class="pagination-btn"
+              elevation="2"
+              outlined
               @click="loadPreviousPage"
             >
               Previous
@@ -910,6 +923,9 @@
 
             <button
               :disabled="pagination.current_page >= pagination.last_page"
+              class="pagination-btn"
+              elevation="2"
+              outlined
               @click="loadNextPage"
             >
               Next
@@ -1482,6 +1498,7 @@ export default {
       loading: false,
       activatorWidth: 0,
       selectedHotelForBooking: {},
+      noAvailability: false,
       pagination: {
         current_page: 1,
         last_page: 1,
@@ -2397,6 +2414,7 @@ export default {
             query: this.query
           }
         })
+        this.filteredZones = []
         this.filteredZones = response.data
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -2611,27 +2629,48 @@ export default {
       if (this.pagination.current_page < this.pagination.last_page) {
         this.pagination.current_page++
         await this.fetchHotelsByPage()
+
+        this.scrollToTop()
       }
     },
     async loadPreviousPage () {
       if (this.pagination.current_page > 1) {
         this.pagination.current_page--
+
         await this.fetchHotelsByPage()
+
+        this.scrollToTop()
       }
+    },
+    scrollToTop () {
+      this.$nextTick(() => {
+        const resultsContainerDiv = this.$refs.resultsContainer?.$el // Access the primary container
+        const noAvailabilityContainerDiv = this.$refs.NoAvailabilityContainer?.$el // Access the fallback container
+
+        if (resultsContainerDiv) {
+          resultsContainerDiv.scrollIntoView({ behavior: 'smooth' })
+        } else if (noAvailabilityContainerDiv) {
+          noAvailabilityContainerDiv.scrollIntoView({ behavior: 'smooth' })
+        }
+      })
     },
     async fetchHotelsByPage () {
       this.isLoading = true
       this.snackbar = false
 
       const page = this.pagination.current_page
-      const pageSize = this.pagination.per_page || 100 // Default 100 per page
+      const pageSize = this.pagination.per_page || 100
       const totalHotels = this.gtaHotels.length
 
-      // Slice the hotels for the current page
       const hotelsForPage = this.gtaHotels.slice(
         (page - 1) * pageSize,
         page * pageSize
       )
+
+      this.hotelAvailsArray = []
+      this.listGtaHotelDetails = []
+      this.filteredHotels = []
+
       const formData = new FormData()
       formData.append('start_date', this.hotelStartDate)
       formData.append('end_date', this.hotelEndDate)
@@ -2641,7 +2680,7 @@ export default {
       formData.append('hotel_type_category', this.selectedHotelTypeCategory || '')
       formData.append('page', page)
       formData.append('per_page', pageSize)
-      formData.append('total_hotels', totalHotels) // Add total number of hotels
+      formData.append('total_hotels', totalHotels)
 
       hotelsForPage.forEach((hotel, index) => {
         formData.append(`hotels[${index}]`, hotel.Jpd_code)
@@ -2673,13 +2712,16 @@ export default {
         const response = await hotelsServices.checkHotelAvailabilities(formData, page, pageSize)
         const availabilityRS = response?.data?.data?.AvailabilityRS
 
-        console.log('Backend Response:', response) // Log backend response
+        console.log('Backend Response:', response)
 
         if (!availabilityRS || availabilityRS?.Errors !== undefined) {
           console.error('Error in availabilityRS:', availabilityRS?.Errors)
-          this.snackbar = true
-          this.color = 'error'
-          this.text = availabilityRS?.Errors?.Error?.Text || 'Unfortunately, there is currently no availability found.'
+          // this.snackbar = true
+          this.minPrice = 0
+          this.maxPrice = 0
+          this.noAvailability = true
+          // this.color = 'error'
+          // this.text = availabilityRS?.Errors?.Error?.Text || 'Unfortunately, there is currently no availability found.'
           this.loaded = false
           this.isLoading = false
           return
@@ -2690,7 +2732,7 @@ export default {
         let results = availabilityRS?.Results?.HotelResult
 
         if (results && !Array.isArray(results)) {
-          results = [results] // Ensure results is always an array
+          results = [results]
         }
 
         if (results.length > 0) {
@@ -2700,7 +2742,6 @@ export default {
 
           console.log(`Page ${page} results:`, results)
 
-          // Apply additional processing
           this.calculatePriceRange()
           this.applyCombinedFilters()
 
@@ -2710,7 +2751,6 @@ export default {
           this.filteredHotels = []
         }
 
-        // Update pagination metadata
         this.pagination.current_page = response.data.pagination.current_page || 1
         this.pagination.last_page = response.data.pagination.total_pages || 1
         this.pagination.total = response.data.pagination.total_hotels || 0
@@ -3676,5 +3716,40 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .pagination-btn {
+  background-color: #D2B48C; /* Light brown */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: capitalize;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #BFA680;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-btn:disabled {
+  background-color: #E5E5E5;
+  color: #A9A9A9;
+  cursor: not-allowed;
+}
+
+.pagination-btn:focus {
+  outline: none;
+  box-shadow: 0 0 5px 2px rgba(210, 180, 140, 0.5); /* Light focus ring */
+}
+
+/* .results-container {
+  max-height: 1000px;
+  overflow-y: auto;
+} */
 
 </style>

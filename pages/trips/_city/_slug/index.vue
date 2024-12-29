@@ -2454,15 +2454,7 @@
                   <div v-for="(adventure, n) in adventures" :key="n">
                     <v-card class="mb-5" style="border-radius: 15px;">
                       <v-card-text>
-                        <v-row class="">
-                          <v-col v-if="adventure.activityImages.length" cols="12" md="4" class="pt-4">
-                            <v-img
-                              max-height="350"
-                              :src="adventure.activityImages[0][0]"
-                              max-width="250"
-                              class="rounded-lg activity-img activity-img-mobile"
-                            />
-                          </v-col>
+                        <v-row class="justify-space-between">
                           <v-col cols="10" :md="adventure.activityImages.length ? 6 : 10">
                             <div class="cruise-result-trip justify-space-between pt-4">
                               <div>
@@ -2476,6 +2468,14 @@
                                 </h5>
                               </div>
                             </div>
+                          </v-col>
+                          <v-col v-if="adventure.activityImages.length" cols="12" md="4" class="pt-4">
+                            <v-img
+                              max-height="350"
+                              :src="adventure.activityImages[0][0]"
+                              max-width="250"
+                              class="rounded-lg rounded-lg d-flex align-end"
+                            />
                           </v-col>
                         </v-row>
                         <v-row>
