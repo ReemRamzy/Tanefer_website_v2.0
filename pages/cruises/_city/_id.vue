@@ -76,7 +76,7 @@
             </v-col>
             <v-col cols="12" md="9" class="mobile-version-frame">
               <v-card class="pa-3">
-                <v-row>
+                <!-- <v-row>
                   <v-col cols="12" md="6">
                     <v-img :src="image" height="230" class="rounded" contain />
                   </v-col>
@@ -91,8 +91,43 @@
                       @click="image = item.image"
                     />
                   </v-col>
-                </v-row>
-                <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
+                </v-row> -->
+                <div class="gallery-container mb-3">
+                  <div class="main-image-container">
+                    <v-img :src="currentMainImage" class="main-image" contain />
+                    <v-btn
+                      icon
+                      :style="{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
+                      class="scroll-btn-left"
+                      @click="prevImage"
+                    >
+                      <v-icon>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      :style="{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
+                      class="scroll-btn-right"
+                      @click="nextImage"
+                    >
+                      <v-icon>mdi-chevron-right</v-icon>
+                    </v-btn>
+                  </div>
+
+                  <div class="thumbnails-container">
+                    <v-img
+                      v-for="(item, i) in cruiseImages"
+                      :key="i"
+                      :src="item.image"
+                      height="80"
+                      width="80"
+                      class="thumbnail"
+                      :class="{ active: currentImageIndex === i }"
+                      @click="selectImage(i)"
+                    />
+                  </div>
+                </div>
+
+                <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-1 py-1 text-capitalize text-h6">
                   {{ cruise.name }}
                   <v-rating
                     background-color="green lighten-2"
@@ -346,6 +381,7 @@ export default {
       cruiseLoading: true,
       cruise: null,
       image: '',
+      currentImageIndex: 0,
       selectedRooms: [],
       selectedRoom: null,
       reserveLoading: false,
@@ -399,6 +435,16 @@ export default {
     }
   },
   computed: {
+    cruiseImages () {
+      const images = this.cruise.images || []
+      if (this.image) {
+        return [{ image: this.image }, ...images] // Master image first
+      }
+      return images
+    },
+    currentMainImage () {
+      return this.cruiseImages[this.currentImageIndex]?.image || ''
+    },
     ...mapState(['cruiseRoomsResults', 'cruiseChosenDate'])
   },
   mounted () {
@@ -409,6 +455,17 @@ export default {
     window.removeEventListener('resize', this.checkIfMobile)
   },
   methods: {
+    prevImage () {
+      this.currentImageIndex =
+        (this.currentImageIndex - 1 + this.cruiseImages.length) % this.cruiseImages.length
+    },
+    nextImage () {
+      this.currentImageIndex =
+        (this.currentImageIndex + 1) % this.cruiseImages.length
+    },
+    selectImage (index) {
+      this.currentImageIndex = index
+    },
     clearData () {
       this.rooms = 1
       this.guests = [
@@ -662,6 +719,48 @@ export default {
 }
 .mobile-chip-font {
   font-size: 11px !important;
+}
+/* .main-image-container {
+  position: relative;
+} */
+
+.gallery-container {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 600px;
+  position: relative;
+}
+
+.main-image-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.main-image {
+  border-radius: 8px;
+  object-fit: cover;
+  height: 300px;
+  width: 100%;
+}
+
+.thumbnails-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: border 0.2s ease;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+  border-color: #a8814e;
 }
 
 </style>

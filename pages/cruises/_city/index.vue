@@ -20,7 +20,7 @@
         <v-card v-for="item in cruises" :key="item.id" max-width="1200" class="mb-5 px-3 mx-auto">
           <v-row>
             <v-col cols="12" md="5">
-              <v-img :src="item.master_image" height="270" class="rounded" contain/>
+              <v-img :src="item.master_image" height="270" class="rounded" />
             </v-col>
             <v-col cols="12" md="7" class="d-flex flex-column justify-space-between">
               <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
@@ -102,9 +102,8 @@
           {{ cruise.name }}
         </v-card-title>
         <v-container>
-          <v-row>
+          <!-- <v-row>
             <v-col cols="12">
-              <!-- height="400" -->
               <v-img :src="image" width="100%" class="rounded" />
             </v-col>
             <v-col cols="12" class="d-flex flex-wrap">
@@ -118,7 +117,41 @@
                 @click="image = item.image"
               />
             </v-col>
-          </v-row>
+          </v-row> -->
+          <div class="gallery-container mb-3">
+            <div class="main-image-container">
+              <v-img :src="currentMainImage" class="main-image" contain />
+              <v-btn
+                icon
+                :style="{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
+                class="scroll-btn-left"
+                @click="prevImage"
+              >
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                :style="{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
+                class="scroll-btn-right"
+                @click="nextImage"
+              >
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-btn>
+            </div>
+
+            <div class="thumbnails-container">
+              <v-img
+                v-for="(item, i) in cruiseImages"
+                :key="i"
+                :src="item.image"
+                height="80"
+                width="80"
+                class="thumbnail"
+                :class="{ active: currentImageIndex === i }"
+                @click="selectImage(i)"
+              />
+            </div>
+          </div>
           <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
             {{ cruise.name }}
             <v-rating
@@ -133,7 +166,8 @@
               :value="cruise.stars"
             />
           </v-card-title>
-          <v-card-subtitle class="py-0 px-0 my-1">sort:  {{ cruise.sort_cruise }} /Cruise Line: {{ cruise.cruise_line }} / Ship: {{ cruise.ship_name }} / Nights: {{ cruise.number_of_nights }} / Cities:
+          <v-card-subtitle class="py-0 px-0 my-1">
+            sort:  {{ cruise.sort_cruise }} /Cruise Line: {{ cruise.cruise_line }} / Ship: {{ cruise.ship_name }} / Nights: {{ cruise.number_of_nights }} / Cities:
             <span v-for="(item, i) in cruise.cities" :key="i">{{ item.name + ', ' }}</span>
           </v-card-subtitle>
           <v-card-text class="px-0">
@@ -235,6 +269,7 @@ export default {
       showCruiseDialog: false,
       showDetailsLoading: false,
       image: '',
+      currentImageIndex: 0,
       // sort: '',
       color: '',
       snackbar: false,
@@ -284,12 +319,33 @@ export default {
     }
   },
   computed: {
+    cruiseImages () {
+      const images = this.cruise.images || []
+      if (this.image) {
+        return [{ image: this.image }, ...images] // Include master image
+      }
+      return images
+    },
+    currentMainImage () {
+      return this.cruiseImages[this.currentImageIndex]?.image || ''
+    },
     ...mapState(['tripsCity', 'cities'])
   },
   async created () {
     await this.getMetaData()
   },
   methods: {
+    prevImage () {
+      this.currentImageIndex =
+        (this.currentImageIndex - 1 + this.cruiseImages.length) % this.cruiseImages.length
+    },
+    nextImage () {
+      this.currentImageIndex =
+        (this.currentImageIndex + 1) % this.cruiseImages.length
+    },
+    selectImage (index) {
+      this.currentImageIndex = index
+    },
     selectCruise (id, name) {
       // eslint-disable-next-line no-console
       console.log(id, name)
@@ -432,4 +488,44 @@ export default {
   font-size: 11px !important;
 }
 }
+
+.gallery-container {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 600px;
+  position: relative;
+}
+
+.main-image-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.main-image {
+  border-radius: 8px;
+  object-fit: cover;
+  height: 300px;
+  width: 100%;
+}
+
+.thumbnails-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: border 0.2s ease;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+  border-color: #a8814e;
+}
+
 </style>
