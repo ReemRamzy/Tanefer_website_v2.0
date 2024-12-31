@@ -240,677 +240,692 @@
             </v-col>
           </v-row>
           <!-- Second Row: Sidebar and Main Content -->
-          <v-row>
-            <v-col cols="12" md="3">
-              <v-card class="pa-3" outlined style="background-color: #CFBB9A">
-                <!-- On mobile -->
-                <v-expansion-panels v-if="isMobile">
-                  <v-expansion-panel>
-                    <v-expansion-panel-header class="text-subtitle-2">
-                      Show Filters
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <!-- Filters content inside the expandable section on mobile -->
-                      <v-text-field
-                        v-model="hotelName"
-                        label="Hotel Name"
-                        outlined
-                        dense
-                        class="mt-1"
-                      />
-                      <v-card class="pa-3 mb-2" outlined>
-                        <p class="text-subtitle-2 mb-2">
-                          Price Range
-                        </p>
-                        <v-range-slider
-                          v-model="priceRange"
-                          :min="minPrice"
-                          :max="maxPrice"
-                          :step="5"
-                          thumb-label="always"
-                          class="mt-10"
-                          @input="applyCombinedFilters"
-                        />
-                      </v-card>
-
-                      <v-card class="pa-3 mb-2" outlined>
-                        <p class="text-subtitle-2 mb-2">
-                          Board Options
-                        </p>
-                        <v-row>
-                          <v-col v-for="board in boardOptions" :key="board.value" cols="12">
-                            <v-checkbox
-                              v-model="selectedBoards"
-                              :value="board.value"
-                              :label="board.label"
-                              hide-details="auto"
-                              dense
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-card>
-
-                      <v-card class="pa-3 mb-2" outlined>
-                        <p class="text-subtitle-2 mb-2 pb-1">
-                          Specify a Category
-                        </p>
-                        <v-row>
-                          <v-col v-for="rating in ratingOptions" :key="rating.value" cols="12">
-                            <v-checkbox
-                              v-model="selectedRatings"
-                              :value="rating.value"
-                              dense
-                              hide-details
-                            >
-                              <template #label>
-                                <span class="rating-stars" style="display: flex; align-items: center;">
-                                  <v-rating
-                                    v-if="isNumericRating(rating.value)"
-                                    :value="parseInt(rating.value)"
-                                    dense
-                                    empty-icon="mdi-star-outline"
-                                    full-icon="mdi-star"
-                                    readonly
-                                    small
-                                  />
-                                  <span v-else style="font-size: 12px;">
-                                    {{ rating.label }}
-                                  </span>
-                                  <span style="font-size: 12px; margin-left: 5px;">
-                                    ({{ rating.count }})
-                                  </span>
-                                </span>
-                              </template>
-                            </v-checkbox>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-
-                <!-- On larger screens -->
-                <div v-else>
-                  <v-text-field
-                    v-model="hotelName"
-                    label="Hotel Name"
-                    outlined
-                    dense
-                    class="mt-1"
-                  />
-                  <v-card class="pa-3 mb-2" outlined>
-                    <p class="text-subtitle-2 mb-2">
-                      Price Range
-                    </p>
-                    <v-range-slider
-                      v-model="priceRange"
-                      :min="minPrice"
-                      :max="maxPrice"
-                      :step="5"
-                      thumb-label="always"
-                      class="mt-10"
-                      @input="applyCombinedFilters"
-                    />
-                  </v-card>
-
-                  <v-card class="pa-2 mb-1" outlined>
-                    <p class="text-subtitle-2 mb-1" style="font-size: 14px; font-weight: bold;">
-                      Board Options
-                    </p>
-                    <v-row dense>
-                      <v-col v-for="board in boardOptions" :key="board.value" cols="12" class="py-1">
-                        <v-checkbox
-                          v-model="selectedBoards"
-                          :value="board.value"
-                          :label="board.label"
-                          hide-details="auto"
+          <div
+            ref="scrollContainer"
+            class="scroll-container"
+            @scroll="handleScroll"
+          >
+            <v-row>
+              <v-col cols="12" md="3">
+                <v-card class="pa-3 sidebar" outlined style="background-color: #CFBB9A">
+                  <!-- On mobile -->
+                  <v-expansion-panels v-if="isMobile">
+                    <v-expansion-panel>
+                      <v-expansion-panel-header class="text-subtitle-2">
+                        Show Filters
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <!-- Filters content inside the expandable section on mobile -->
+                        <v-text-field
+                          v-model="hotelName"
+                          label="Hotel Name"
+                          outlined
                           dense
-                          style="font-size: 12px;"
+                          class="mt-1"
                         />
-                      </v-col>
-                    </v-row>
-                  </v-card>
-
-                  <v-card class="pa-2 mb-1" outlined>
-                    <p class="text-subtitle-2 mb-1" style="font-size: 14px; font-weight: bold;">
-                      Specify a Category
-                    </p>
-                    <v-row dense>
-                      <v-col v-for="rating in ratingOptions" :key="rating.value" cols="12" class="py-1">
-                        <v-checkbox
-                          v-model="selectedRatings"
-                          :value="rating.value"
-                          dense
-                          hide-details
-                          style="font-size: 12px;"
-                        >
-                          <template #label>
-                            <span class="rating-stars" style="display: flex; align-items: center; font-size: 14px;">
-                              <v-rating
-                                v-if="isNumericRating(rating.value)"
-                                :value="parseInt(rating.value)"
-                                dense
-                                empty-icon="mdi-star-outline"
-                                full-icon="mdi-star"
-                                readonly
-                                small
-                              />
-                              <span v-else>{{ rating.label }}</span>
-                              <span style="margin-left: 4px;">
-                                ({{ rating.count }})
-                              </span>
-                            </span>
-                          </template>
-                        </v-checkbox>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </div>
-              </v-card>
-            </v-col>
-            <!-- Main Content (col-8) -->
-            <v-col cols="12" md="9">
-              <v-card v-if="noAvailability" ref="NoAvailabilityContainer" class="pa-3">
-                <div class="d-flex justify-center align-center">
-                  <v-icon large color="error">
-                    mdi-alert-circle-outline
-                  </v-icon>
-                  <p class="text-subtitle-1 mt-2 ml-2 pt-2">
-                    We’re sorry, but no availability was found.
-                  </p>
-                </div>
-              </v-card>
-              <v-card v-else ref="resultsContainer" class="pa-3 results-container">
-                <h3>Available Hotels</h3>
-                <div v-for="(hotel, h) in filteredHotels" :key="h">
-                  <!-- Hotel Card -->
-                  <v-card class="hotel-card mb-2" max-width="100%" height="100%" elevation="2">
-                    <v-row no-gutters class="align-stretch">
-                      <!-- Desktop Card -->
-                      <v-col
-                        v-if="!$vuetify.breakpoint.xsOnly"
-                        cols="12"
-                        class="d-flex"
-                      >
-                        <!-- Hotel Image -->
-                        <v-col cols="4" class="p-0">
-                          <v-img
-                            :src="getHotelImageSrc(hotel)"
-                            alt="Hotel Image"
-                            class="hotel-image"
-                            style="width: 260px; height: 232px; object-fit: cover; overflow: hidden;"
+                        <v-card class="pa-3 mb-2" outlined>
+                          <p class="text-subtitle-2 mb-2">
+                            Price Range
+                          </p>
+                          <v-range-slider
+                            v-model="priceRange"
+                            :min="minPrice"
+                            :max="maxPrice"
+                            :step="5"
+                            thumb-label="always"
+                            class="mt-10"
+                            @input="applyCombinedFilters"
                           />
-                        </v-col>
+                        </v-card>
 
-                        <!-- Hotel Content -->
-                        <v-col cols="8" class="py-2 pl-0" style="margin-left: -15px;">
-                          <div class="d-flex justify-space-between align-center mb-1 hotel-title">
-                            <div>
-                              <h4 class="mb-0 font-weight-bold">
-                                {{ hotel.HotelInfo.Name || 'Hotel Name' }}
-                              </h4>
-                              <v-icon color="red" class="">
-                                mdi-map-marker
-                              </v-icon>
-                              <span class="grey--text text-caption text-justify">
-                                <span v-html="formatAddress(hotel.HotelInfo.Address) || 'Location'" />
-                              </span>
-                            </div>
-                          </div>
-
-                          <!-- Hotel Description -->
-                          <div class="grey--text text-justify text-body-2 font-italic description mb-1">
-                            {{ truncatedDescriptions[h] }}
-                          </div>
-
-                          <!-- Buttons Section -->
-                          <v-row no-gutters>
-                            <v-col cols="12" class="pa-1">
-                              <div class="mt-2 d-flex justify-space-between align-center">
-                                <v-btn small outlined color="sienna" class="mr-2 px-5 no-wrap v-btn-brown" @click="showHotelDetailsObject(h)">
-                                  Info
-                                </v-btn>
-                              </div>
+                        <v-card class="pa-3 mb-2" outlined>
+                          <p class="text-subtitle-2 mb-2">
+                            Board Options
+                          </p>
+                          <v-row>
+                            <v-col v-for="board in boardOptions" :key="board.value" cols="12">
+                              <v-checkbox
+                                v-model="selectedBoards"
+                                :value="board.value"
+                                :label="board.label"
+                                hide-details="auto"
+                                dense
+                              />
                             </v-col>
                           </v-row>
+                        </v-card>
 
-                          <!-- Price and Rating -->
-                          <div class="price-wrapper text-right">
-                            <v-rating
-                              :value="getRatingFromCategory(hotel.HotelInfo.HotelCategory._)"
-                              active-color="yellow-accent-4"
-                              dense
-                              readonly
-                            />
-                            <small class="grey--text">{{ hotel.HotelInfo.HotelCategory._ }}</small>
-                            <br>
-                            <small class="grey--text">Average price</small>
-                            <div class="font-weight-bold text-subtitle-1">
-                              ${{ getHotelPrice(hotel) || 'not defined' }}
-                            </div>
-                          </div>
+                        <v-card class="pa-3 mb-2" outlined>
+                          <p class="text-subtitle-2 mb-2 pb-1">
+                            Specify a Category
+                          </p>
+                          <v-row>
+                            <v-col v-for="rating in ratingOptions" :key="rating.value" cols="12">
+                              <v-checkbox
+                                v-model="selectedRatings"
+                                :value="rating.value"
+                                dense
+                                hide-details
+                              >
+                                <template #label>
+                                  <span class="rating-stars" style="display: flex; align-items: center;">
+                                    <v-rating
+                                      v-if="isNumericRating(rating.value)"
+                                      :value="parseInt(rating.value)"
+                                      dense
+                                      empty-icon="mdi-star-outline"
+                                      full-icon="mdi-star"
+                                      readonly
+                                      small
+                                    />
+                                    <span v-else style="font-size: 12px;">
+                                      {{ rating.label }}
+                                    </span>
+                                    <span style="font-size: 12px; margin-left: 5px;">
+                                      ({{ rating.count }})
+                                    </span>
+                                  </span>
+                                </template>
+                              </v-checkbox>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+
+                  <!-- On larger screens -->
+                  <div v-else>
+                    <v-text-field
+                      v-model="hotelName"
+                      label="Hotel Name"
+                      outlined
+                      dense
+                      class="mt-1"
+                    />
+                    <v-card class="pa-3 mb-2" outlined>
+                      <p class="text-subtitle-2 mb-2">
+                        Price Range
+                      </p>
+                      <v-range-slider
+                        v-model="priceRange"
+                        :min="minPrice"
+                        :max="maxPrice"
+                        :step="5"
+                        thumb-label="always"
+                        class="mt-10"
+                        @input="applyCombinedFilters"
+                      />
+                    </v-card>
+
+                    <v-card class="pa-2 mb-1" outlined>
+                      <p class="text-subtitle-2 mb-1" style="font-size: 14px; font-weight: bold;">
+                        Board Options
+                      </p>
+                      <v-row dense>
+                        <v-col v-for="board in boardOptions" :key="board.value" cols="12" class="py-1">
+                          <v-checkbox
+                            v-model="selectedBoards"
+                            :value="board.value"
+                            :label="board.label"
+                            hide-details="auto"
+                            dense
+                            style="font-size: 12px;"
+                          />
                         </v-col>
-                      </v-col>
+                      </v-row>
+                    </v-card>
 
-                      <!-- Mobile Card -->
-                      <v-col
-                        v-else
-                        cols="12"
-                      >
-                        <!-- Hotel Image -->
-                        <v-img
-                          :src="getHotelImageSrc(hotel)"
-                          alt="Hotel Image"
-                          class="hotel-image"
-                          style="width: 100%; height: 200px; object-fit: cover; overflow: hidden;"
-                        />
-
-                        <!-- Hotel Content -->
-                        <div class="pa-2">
-                          <div class="d-flex justify-space-between align-center mb-1 hotel-title">
-                            <div>
-                              <h4 class="mb-0 font-weight-bold">
-                                {{ hotel.HotelInfo.Name || 'Hotel Name' }}
-                              </h4>
-                              <v-icon color="red" class="">
-                                mdi-map-marker
-                              </v-icon>
-                              <span class="grey--text text-caption text-justify">
-                                <span v-html="formatAddress(hotel.HotelInfo.Address) || 'Location'" />
+                    <v-card class="pa-2 mb-1" outlined>
+                      <p class="text-subtitle-2 mb-1" style="font-size: 14px; font-weight: bold;">
+                        Specify a Category
+                      </p>
+                      <v-row dense>
+                        <v-col v-for="rating in ratingOptions" :key="rating.value" cols="12" class="py-1">
+                          <v-checkbox
+                            v-model="selectedRatings"
+                            :value="rating.value"
+                            dense
+                            hide-details
+                            style="font-size: 12px;"
+                          >
+                            <template #label>
+                              <span class="rating-stars" style="display: flex; align-items: center; font-size: 14px;">
+                                <v-rating
+                                  v-if="isNumericRating(rating.value)"
+                                  :value="parseInt(rating.value)"
+                                  dense
+                                  empty-icon="mdi-star-outline"
+                                  full-icon="mdi-star"
+                                  readonly
+                                  small
+                                />
+                                <span v-else>{{ rating.label }}</span>
+                                <span style="margin-left: 4px;">
+                                  ({{ rating.count }})
+                                </span>
                               </span>
+                            </template>
+                          </v-checkbox>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </div>
+                </v-card>
+              </v-col>
+              <!-- Main Content (col-8) -->
+
+              <v-col cols="12" md="9">
+                <v-card v-if="noAvailability" ref="NoAvailabilityContainer" class="pa-3">
+                  <div class="d-flex justify-center align-center">
+                    <v-icon large color="error">
+                      mdi-alert-circle-outline
+                    </v-icon>
+                    <p class="text-subtitle-1 mt-2 ml-2 pt-2">
+                      We’re sorry, but no availability was found.
+                    </p>
+                  </div>
+                </v-card>
+                <v-card v-else ref="resultsContainer" class="pa-3 results-container">
+                  <h3>Available Hotels</h3>
+                  <div v-for="(hotel, h) in filteredHotels" :key="h">
+                    <!-- Hotel Card -->
+                    <v-card class="hotel-card mb-2" max-width="100%" height="100%" elevation="2">
+                      <v-row no-gutters class="align-stretch">
+                        <!-- Desktop Card -->
+                        <v-col
+                          v-if="!$vuetify.breakpoint.xsOnly"
+                          cols="12"
+                          class="d-flex"
+                        >
+                          <!-- Hotel Image -->
+                          <v-col cols="4" class="p-0">
+                            <v-img
+                              :src="getHotelImageSrc(hotel)"
+                              alt="Hotel Image"
+                              class="hotel-image"
+                              style="width: 260px; height: 232px; object-fit: cover; overflow: hidden;"
+                            />
+                          </v-col>
+
+                          <!-- Hotel Content -->
+                          <v-col cols="8" class="py-2 pl-0" style="margin-left: -15px;">
+                            <div class="d-flex justify-space-between align-center mb-1 hotel-title">
+                              <div>
+                                <h4 class="mb-0 font-weight-bold">
+                                  {{ hotel.HotelInfo.Name || 'Hotel Name' }}
+                                </h4>
+                                <v-icon color="red" class="">
+                                  mdi-map-marker
+                                </v-icon>
+                                <span class="grey--text text-caption text-justify">
+                                  <span v-html="formatAddress(hotel.HotelInfo.Address) || 'Location'" />
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <v-row class=" pb-1 mb-1">
-                            <!-- Rating Section -->
-                            <v-col cols="6" class="d-flex align-center">
+
+                            <!-- Hotel Description -->
+                            <div class="grey--text text-justify text-body-2 font-italic description mb-1">
+                              {{ truncatedDescriptions[h] }}
+                            </div>
+
+                            <!-- Buttons Section -->
+                            <v-row no-gutters>
+                              <v-col cols="12" class="pa-1">
+                                <div class="mt-2 d-flex justify-space-between align-center">
+                                  <v-btn small outlined color="sienna" class="mr-2 px-5 no-wrap v-btn-brown" @click="showHotelDetailsObject(h)">
+                                    Info
+                                  </v-btn>
+                                </div>
+                              </v-col>
+                            </v-row>
+
+                            <!-- Price and Rating -->
+                            <div class="price-wrapper text-right">
                               <v-rating
                                 :value="getRatingFromCategory(hotel.HotelInfo.HotelCategory._)"
                                 active-color="yellow-accent-4"
                                 dense
                                 readonly
                               />
-                            </v-col>
-
-                            <!-- Price Section -->
-                            <v-col cols="6" class="d-flex justify-end text-right">
-                              <div>
-                                <small class="grey--text">Average price</small>
-                                <div class="font-weight-bold text-subtitle-1">
-                                  ${{ getHotelPrice(hotel) || 'not defined' }}
-                                </div>
+                              <small class="grey--text">{{ hotel.HotelInfo.HotelCategory._ }}</small>
+                              <br>
+                              <small class="grey--text">Average price</small>
+                              <div class="font-weight-bold text-subtitle-1">
+                                ${{ getHotelPrice(hotel) || 'not defined' }}
                               </div>
-                            </v-col>
-                          </v-row>
-                          <!-- Hotel Description -->
-                          <div class="grey--text text-body-2 font-italic mb-1">
-                            {{ truncatedDescriptions[h] }}
-                          </div>
+                            </div>
+                          </v-col>
+                        </v-col>
 
-                          <!-- Buttons Section -->
-                          <div class="mt-2 d-flex justify-space-between align-center">
-                            <v-btn small outlined color="sienna" class="mr-2 px-5 no-wrap v-btn-brown" @click="showHotelDetailsObject(h)">
-                              Info
-                            </v-btn>
+                        <!-- Mobile Card -->
+                        <v-col
+                          v-else
+                          cols="12"
+                        >
+                          <!-- Hotel Image -->
+                          <v-img
+                            :src="getHotelImageSrc(hotel)"
+                            alt="Hotel Image"
+                            class="hotel-image"
+                            style="width: 100%; height: 200px; object-fit: cover; overflow: hidden;"
+                          />
+
+                          <!-- Hotel Content -->
+                          <div class="pa-2">
+                            <div class="d-flex justify-space-between align-center mb-1 hotel-title">
+                              <div>
+                                <h4 class="mb-0 font-weight-bold">
+                                  {{ hotel.HotelInfo.Name || 'Hotel Name' }}
+                                </h4>
+                                <v-icon color="red" class="">
+                                  mdi-map-marker
+                                </v-icon>
+                                <span class="grey--text text-caption text-justify">
+                                  <span v-html="formatAddress(hotel.HotelInfo.Address) || 'Location'" />
+                                </span>
+                              </div>
+                            </div>
+                            <v-row class=" pb-1 mb-1">
+                              <!-- Rating Section -->
+                              <v-col cols="6" class="d-flex align-center">
+                                <v-rating
+                                  :value="getRatingFromCategory(hotel.HotelInfo.HotelCategory._)"
+                                  active-color="yellow-accent-4"
+                                  dense
+                                  readonly
+                                />
+                              </v-col>
+
+                              <!-- Price Section -->
+                              <v-col cols="6" class="d-flex justify-end text-right">
+                                <div>
+                                  <small class="grey--text">Average price</small>
+                                  <div class="font-weight-bold text-subtitle-1">
+                                    ${{ getHotelPrice(hotel) || 'not defined' }}
+                                  </div>
+                                </div>
+                              </v-col>
+                            </v-row>
+                            <!-- Hotel Description -->
+                            <div class="grey--text text-body-2 font-italic mb-1">
+                              {{ truncatedDescriptions[h] }}
+                            </div>
+
+                            <!-- Buttons Section -->
+                            <div class="mt-2 d-flex justify-space-between align-center">
+                              <v-btn small outlined color="sienna" class="mr-2 px-5 no-wrap v-btn-brown" @click="showHotelDetailsObject(h)">
+                                Info
+                              </v-btn>
+                            </div>
                           </div>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <!-- Room Details desktop-->
-                    <v-row v-if="!$vuetify.breakpoint.xsOnly" style="margin-top: -20px;">
-                      <v-col cols="12">
-                        <div>
-                          <v-expand-transition>
-                            <v-card v-if="true" class="mt-2" elevation="2">
-                              <v-card-text>
-                                <v-row v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(0, 2)" :key="index" class="room-card">
-                                  <v-col cols="12">
-                                    <v-row justify="space-between">
-                                      <v-col cols="12" md="6">
-                                        <h5 class="mb-0 brown--text text-decoration-underline">
-                                          {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
-                                        </h5>
-                                      </v-col>
-                                    </v-row>
-                                    <v-row class="d-flex align-center justify-space-between" no-gutters>
-                                      <v-col cols="4">
-                                        <p class="mb-0 font-weight-medium">
-                                          <!-- <strong>Board:</strong> -->
-                                          <span class="grey--text">
-                                            {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
-                                          </span>
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="4" class="d-flex align-start">
-                                        <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class="text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
-                                          {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
-                                          <v-icon small class="ml-1">
-                                            {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                          </v-icon>
-                                        </v-btn>
-                                      </v-col>
-                                      <v-col cols="4" class="d-flex justify-end">
-                                        <p class="mr-3 font-weight-bold text-subtitle-1">
-                                          $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }}
-                                        </p>
-                                        <v-btn small class="mr-2 px-8 py-4 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
-                                          Book
-                                        </v-btn>
-                                      </v-col>
-                                    </v-row>
-                                    <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
-                                      <v-col cols="12">
-                                        <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
-                                          <tr style="background-color: #eaeaea;">
-                                            <td style="padding: 10px;">
-                                              <strong>Cancellation Charges:</strong>
-                                            </td>
-                                          </tr>
-                                          <tr style="background-color: rgb(255,239.5,193);">
-                                            <td style="padding: 10px; color: rgb(134.5,100.875,0);">
-                                              <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
-                                                mdi-alert
-                                              </v-icon>
-                                              Booking subject to cancellation charges
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td style="padding: 10px;">
-                                              <span class="grey--text">
-                                                <span>
+                        </v-col>
+                      </v-row>
+                      <!-- Room Details desktop-->
+                      <v-row v-if="!$vuetify.breakpoint.xsOnly" style="margin-top: -20px;">
+                        <v-col cols="12">
+                          <div>
+                            <v-expand-transition>
+                              <v-card v-if="true" class="mt-2" elevation="2">
+                                <v-card-text>
+                                  <v-row v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(0, 2)" :key="index" class="room-card">
+                                    <v-col cols="12">
+                                      <v-row justify="space-between">
+                                        <v-col cols="12" md="6">
+                                          <h5 class="mb-0 brown--text text-decoration-underline">
+                                            {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
+                                          </h5>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row class="d-flex align-center justify-space-between" no-gutters>
+                                        <v-col cols="4">
+                                          <p class="mb-0 font-weight-medium">
+                                            <!-- <strong>Board:</strong> -->
+                                            <span class="grey--text">
+                                              {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
+                                            </span>
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="4" class="d-flex align-start">
+                                          <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class="text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
+                                            {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
+                                            <v-icon small class="ml-1">
+                                              {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                            </v-icon>
+                                          </v-btn>
+                                        </v-col>
+                                        <v-col cols="4" class="d-flex justify-end">
+                                          <p class="mr-3 font-weight-bold text-subtitle-1">
+                                            $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }}
+                                          </p>
+                                          <v-btn small class="mr-2 px-8 py-4 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
+                                            Book
+                                          </v-btn>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
+                                        <v-col cols="12">
+                                          <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
+                                            <tr style="background-color: #eaeaea;">
+                                              <td style="padding: 10px;">
+                                                <strong>Cancellation Charges:</strong>
+                                              </td>
+                                            </tr>
+                                            <tr style="background-color: rgb(255,239.5,193);">
+                                              <td style="padding: 10px; color: rgb(134.5,100.875,0);">
+                                                <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
+                                                  mdi-alert
+                                                </v-icon>
+                                                Booking subject to cancellation charges
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td style="padding: 10px;">
+                                                <span class="grey--text">
+                                                  <span>
+                                                    <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
+                                                  </span>
+                                                </span>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+                                  </v-row>
+
+                                  <!-- Show more rooms if available -->
+                                  <v-row v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2 && showAllRoomsForHotel[h]">
+                                    <v-col v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(2)" :key="index + 2" cols="12" class="room-card">
+                                      <v-row justify="space-between">
+                                        <v-col cols="12" md="6">
+                                          <h5 class="mb-0 brown--text  text-decoration-underline">
+                                            {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
+                                          </h5>
+                                        </v-col>
+                                      </v-row>
+                                      <!-- Aligning the Board, Non-refundable, and Book Button in one row -->
+                                      <v-row class="d-flex align-center justify-space-between" no-gutters>
+                                        <v-col cols="4">
+                                          <p class="mb-0 font-weight-medium">
+                                            <strong>Board:</strong>
+                                            <span class="grey--text">
+                                              {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
+                                            </span>
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="4" class="d-flex align-center">
+                                          <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class=" text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
+                                            {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
+                                            <v-icon small class="ml-1">
+                                              {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                            </v-icon>
+                                          </v-btn>
+                                        </v-col>
+                                        <v-col cols="4" class="d-flex justify-end">
+                                          <p class="mr-3 font-weight-bold text-subtitle-1">
+                                            $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }}
+                                          </p>
+                                          <!-- Book Button -->
+                                          <v-btn small class="mr-2 px-8 py-4 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
+                                            Book
+                                          </v-btn>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
+                                        <v-col cols="12">
+                                          <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
+                                            <!-- Row 1: Cancellation Charges -->
+                                            <tr style="background-color: #eaeaea;">
+                                              <td style="padding: 10px;">
+                                                <strong>Cancellation Charges:</strong>
+                                              </td>
+                                            </tr>
+
+                                            <!-- Row 2: Alert Message -->
+                                            <tr style="background-color: rgb(255,239.5,193);">
+                                              <td style="padding: 10px; color: rgb(134.5,100.875,0);">
+                                                <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
+                                                  mdi-alert
+                                                </v-icon>
+                                                Booking subject to cancellation charges
+                                              </td>
+                                            </tr>
+
+                                            <!-- Row 3: Cancellation Policy Details -->
+                                            <tr>
+                                              <td style="padding: 10px;">
+                                                <span class="grey--text">
+                                                  <span>
+                                                    <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
+                                                  </span>
+                                                </span>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+                                  </v-row>
+                                  <!-- Toggle button to show more/less rooms -->
+                                  <v-row justify="center">
+                                    <v-col cols="auto">
+                                      <v-btn
+                                        v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2"
+                                        small
+                                        class="text-body-1 text-brown font-weight-bold"
+                                        text
+                                        color="brown"
+                                        @click="toggleRoomDisplay(h)"
+                                      >
+                                        {{ showAllRoomsForHotel[h] ? 'See Less' : `See More (${hiddenRoomCount(hotel.HotelOptions.HotelOption)}+)` }}
+                                        <v-icon small>
+                                          {{ showAllRoomsForHotel[h] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                        </v-icon>
+                                      </v-btn>
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                              </v-card>
+                            </v-expand-transition>
+                          </div>
+                        </v-col>
+                      </v-row>
+                      <!-- room details mobile -->
+                      <v-row v-else style="margin-top: -20px;">
+                        <v-col cols="12">
+                          <div>
+                            <v-expand-transition>
+                              <v-card v-if="true" class="mt-2" elevation="2">
+                                <v-card-text>
+                                  <v-row
+                                    v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(0, 2)"
+                                    :key="index"
+                                    class="room-card"
+                                    no-gutters
+                                  >
+                                    <v-col cols="12">
+                                      <v-row justify="space-between" class="align-center">
+                                        <v-col cols="12" md="6">
+                                          <h5 class="mb-0 brown--text text-decoration-underline">
+                                            {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
+                                          </h5>
+                                        </v-col>
+                                      </v-row>
+
+                                      <!-- Adjust room details layout for mobile -->
+                                      <v-row
+                                        class="d-flex align-center justify-space-between"
+                                        :class="{ 'flex-column': isMobile }"
+                                        no-gutters
+                                      >
+                                        <v-col cols="12" md="4" class="py-1">
+                                          <p class="mb-0 font-weight-medium">
+                                            <span class="grey--text">
+                                              {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
+                                            </span>
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="py-1 d-flex justify-start">
+                                          <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class="text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
+                                            {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
+                                            <v-icon small class="ml-1">
+                                              {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                            </v-icon>
+                                          </v-btn>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="d-flex justify-end py-1">
+                                          <p class="mr-3 font-weight-black text-h6">
+                                            $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }} USD
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="py-1">
+                                          <v-btn size="x-large" block class="pa-1 ma-1 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
+                                            Book
+                                          </v-btn>
+                                        </v-col>
+                                      </v-row>
+
+                                      <!-- Cancellation Policy Details -->
+                                      <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
+                                        <v-col cols="12">
+                                          <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
+                                            <tr style="background-color: #eaeaea;">
+                                              <td style="padding: 10px;">
+                                                <strong>Cancellation Charges:</strong>
+                                              </td>
+                                            </tr>
+                                            <tr style="background-color: rgb(255,239.5,193);">
+                                              <td style="padding: 10px; color: rgb(134.5,100.875,0);">
+                                                <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
+                                                  mdi-alert
+                                                </v-icon>
+                                                Booking subject to cancellation charges
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td style="padding: 10px;">
+                                                <span class="grey--text">
                                                   <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
                                                 </span>
-                                              </span>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </v-col>
-                                    </v-row>
-                                  </v-col>
-                                </v-row>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+                                  </v-row>
 
-                                <!-- Show more rooms if available -->
-                                <v-row v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2 && showAllRoomsForHotel[h]">
-                                  <v-col v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(2)" :key="index + 2" cols="12" class="room-card">
-                                    <v-row justify="space-between">
-                                      <v-col cols="12" md="6">
-                                        <h5 class="mb-0 brown--text  text-decoration-underline">
-                                          {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
-                                        </h5>
-                                      </v-col>
-                                    </v-row>
-                                    <!-- Aligning the Board, Non-refundable, and Book Button in one row -->
-                                    <v-row class="d-flex align-center justify-space-between" no-gutters>
-                                      <v-col cols="4">
-                                        <p class="mb-0 font-weight-medium">
-                                          <strong>Board:</strong>
-                                          <span class="grey--text">
-                                            {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
-                                          </span>
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="4" class="d-flex align-center">
-                                        <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class=" text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
-                                          {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
-                                          <v-icon small class="ml-1">
-                                            {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                          </v-icon>
-                                        </v-btn>
-                                      </v-col>
-                                      <v-col cols="4" class="d-flex justify-end">
-                                        <p class="mr-3 font-weight-bold text-subtitle-1">
-                                          $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }}
-                                        </p>
-                                        <!-- Book Button -->
-                                        <v-btn small class="mr-2 px-8 py-4 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
-                                          Book
-                                        </v-btn>
-                                      </v-col>
-                                    </v-row>
-                                    <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
-                                      <v-col cols="12">
-                                        <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
-                                          <!-- Row 1: Cancellation Charges -->
-                                          <tr style="background-color: #eaeaea;">
-                                            <td style="padding: 10px;">
-                                              <strong>Cancellation Charges:</strong>
-                                            </td>
-                                          </tr>
+                                  <!-- Show more rooms if available -->
+                                  <v-row v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2 && showAllRoomsForHotel[h]">
+                                    <v-col v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(2)" :key="index + 2" cols="12" class="room-card">
+                                      <v-row justify="space-between">
+                                        <v-col cols="12" md="6">
+                                          <h5 class="mb-0 brown--text text-decoration-underline">
+                                            {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
+                                          </h5>
+                                        </v-col>
+                                      </v-row>
+                                      <!-- Aligning the Board, Non-refundable, and Book Button in one row -->
+                                      <v-row class="d-flex align-center justify-space-between" :class="{ 'flex-column': isMobile }" no-gutters>
+                                        <v-col cols="12" md="4" class="py-1">
+                                          <p class="mb-0 font-weight-medium">
+                                            <span class="grey--text">
+                                              {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
+                                            </span>
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="py-1 d-flex justify-start">
+                                          <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class=" text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
+                                            {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
+                                            <v-icon small class="ml-1">
+                                              {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                            </v-icon>
+                                          </v-btn>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="d-flex justify-end py-1">
+                                          <p class="mr-3 font-weight-black text-h6">
+                                            $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }} USD
+                                          </p>
+                                        </v-col>
+                                        <v-col cols="12" md="4" class="py-1">
+                                          <v-btn size="x-large" block class="pa-1 ma-1 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
+                                            Book
+                                          </v-btn>
+                                        </v-col>
+                                      </v-row>
+                                      <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
+                                        <v-col cols="12">
+                                          <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
+                                            <!-- Row 1: Cancellation Charges -->
+                                            <tr style="background-color: #eaeaea;">
+                                              <td style="padding: 10px;">
+                                                <strong>Cancellation Charges:</strong>
+                                              </td>
+                                            </tr>
 
-                                          <!-- Row 2: Alert Message -->
-                                          <tr style="background-color: rgb(255,239.5,193);">
-                                            <td style="padding: 10px; color: rgb(134.5,100.875,0);">
-                                              <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
-                                                mdi-alert
-                                              </v-icon>
-                                              Booking subject to cancellation charges
-                                            </td>
-                                          </tr>
+                                            <!-- Row 2: Alert Message -->
+                                            <tr style="background-color: rgb(255,239.5,193);">
+                                              <td style="padding: 10px; color: rgb(134.5,100.875,0);">
+                                                <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
+                                                  mdi-alert
+                                                </v-icon>
+                                                Booking subject to cancellation charges
+                                              </td>
+                                            </tr>
 
-                                          <!-- Row 3: Cancellation Policy Details -->
-                                          <tr>
-                                            <td style="padding: 10px;">
-                                              <span class="grey--text">
-                                                <span>
+                                            <!-- Row 3: Cancellation Policy Details -->
+                                            <tr>
+                                              <td style="padding: 10px;">
+                                                <span class="grey--text">
                                                   <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
                                                 </span>
-                                              </span>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </v-col>
-                                    </v-row>
-                                  </v-col>
-                                </v-row>
-                                <!-- Toggle button to show more/less rooms -->
-                                <v-row justify="center">
-                                  <v-col cols="auto">
-                                    <v-btn
-                                      v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2"
-                                      small
-                                      class="text-body-1 text-brown font-weight-bold"
-                                      text
-                                      color="brown"
-                                      @click="toggleRoomDisplay(h)"
-                                    >
-                                      {{ showAllRoomsForHotel[h] ? 'See Less' : `See More (${hiddenRoomCount(hotel.HotelOptions.HotelOption)}+)` }}
-                                      <v-icon small>
-                                        {{ showAllRoomsForHotel[h] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                      </v-icon>
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                            </v-card>
-                          </v-expand-transition>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <!-- room details mobile -->
-                    <v-row v-else style="margin-top: -20px;">
-                      <v-col cols="12">
-                        <div>
-                          <v-expand-transition>
-                            <v-card v-if="true" class="mt-2" elevation="2">
-                              <v-card-text>
-                                <v-row
-                                  v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(0, 2)"
-                                  :key="index"
-                                  class="room-card"
-                                  no-gutters
-                                >
-                                  <v-col cols="12">
-                                    <v-row justify="space-between" class="align-center">
-                                      <v-col cols="12" md="6">
-                                        <h5 class="mb-0 brown--text text-decoration-underline">
-                                          {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
-                                        </h5>
-                                      </v-col>
-                                    </v-row>
+                                              </td>
+                                            </tr>
+                                          </table>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+                                  </v-row>
+                                  <!-- Toggle button to show more/less rooms -->
+                                  <v-row justify="center">
+                                    <v-col cols="auto">
+                                      <v-btn
+                                        v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2"
+                                        small
+                                        class="text-body-1 text-brown font-weight-bold"
+                                        text
+                                        color="brown"
+                                        @click="toggleRoomDisplay(h)"
+                                      >
+                                        {{ showAllRoomsForHotel[h] ? 'See Less' : `See More (${hiddenRoomCount(hotel.HotelOptions.HotelOption)}+)` }}
+                                        <v-icon small>
+                                          {{ showAllRoomsForHotel[h] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                                        </v-icon>
+                                      </v-btn>
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                              </v-card>
+                            </v-expand-transition>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </div>
 
-                                    <!-- Adjust room details layout for mobile -->
-                                    <v-row
-                                      class="d-flex align-center justify-space-between"
-                                      :class="{ 'flex-column': isMobile }"
-                                      no-gutters
-                                    >
-                                      <v-col cols="12" md="4" class="py-1">
-                                        <p class="mb-0 font-weight-medium">
-                                          <span class="grey--text">
-                                            {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
-                                          </span>
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="py-1 d-flex justify-start">
-                                        <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class="text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
-                                          {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
-                                          <v-icon small class="ml-1">
-                                            {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                          </v-icon>
-                                        </v-btn>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="d-flex justify-end py-1">
-                                        <p class="mr-3 font-weight-black text-h6">
-                                          $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }} USD
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="py-1">
-                                        <v-btn size="x-large" block class="pa-1 ma-1 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
-                                          Book
-                                        </v-btn>
-                                      </v-col>
-                                    </v-row>
-
-                                    <!-- Cancellation Policy Details -->
-                                    <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
-                                      <v-col cols="12">
-                                        <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
-                                          <tr style="background-color: #eaeaea;">
-                                            <td style="padding: 10px;">
-                                              <strong>Cancellation Charges:</strong>
-                                            </td>
-                                          </tr>
-                                          <tr style="background-color: rgb(255,239.5,193);">
-                                            <td style="padding: 10px; color: rgb(134.5,100.875,0);">
-                                              <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
-                                                mdi-alert
-                                              </v-icon>
-                                              Booking subject to cancellation charges
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td style="padding: 10px;">
-                                              <span class="grey--text">
-                                                <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
-                                              </span>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </v-col>
-                                    </v-row>
-                                  </v-col>
-                                </v-row>
-
-                                <!-- Show more rooms if available -->
-                                <v-row v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2 && showAllRoomsForHotel[h]">
-                                  <v-col v-for="(roomOption, index) in getRoomOptions(hotel.HotelOptions.HotelOption).slice(2)" :key="index + 2" cols="12" class="room-card">
-                                    <v-row justify="space-between">
-                                      <v-col cols="12" md="6">
-                                        <h5 class="mb-0 brown--text text-decoration-underline">
-                                          {{ roomOption.HotelRooms.HotelRoom?.Name || 'Room Name Not Available' }}
-                                        </h5>
-                                      </v-col>
-                                    </v-row>
-                                    <!-- Aligning the Board, Non-refundable, and Book Button in one row -->
-                                    <v-row class="d-flex align-center justify-space-between" :class="{ 'flex-column': isMobile }" no-gutters>
-                                      <v-col cols="12" md="4" class="py-1">
-                                        <p class="mb-0 font-weight-medium">
-                                          <span class="grey--text">
-                                            {{ roomOption.Board && roomOption.Board._ || 'Board not available' }}
-                                          </span>
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="py-1 d-flex justify-start">
-                                        <v-btn small text :color="nonRefundableStatus(roomOption) ? 'red' : 'green'" class=" text-decoration-underline" @click="toggleCancellationPolicy(h, index)">
-                                          {{ nonRefundableStatus(roomOption) ? 'Non-refundable' : 'Cancellation Available' }}
-                                          <v-icon small class="ml-1">
-                                            {{ showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                          </v-icon>
-                                        </v-btn>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="d-flex justify-end py-1">
-                                        <p class="mr-3 font-weight-black text-h6">
-                                          $ {{ roomOption.Prices?.Price?.TotalFixAmounts?.Gross || 'Price not available' }} USD
-                                        </p>
-                                      </v-col>
-                                      <v-col cols="12" md="4" class="py-1">
-                                        <v-btn size="x-large" block class="pa-1 ma-1 no-wrap v-btn-brown" @click="bookRoom(roomOption, h)">
-                                          Book
-                                        </v-btn>
-                                      </v-col>
-                                    </v-row>
-                                    <v-row v-if="showFullCancellationPolicy[h] && showFullCancellationPolicy[h][index]">
-                                      <v-col cols="12">
-                                        <table width="100%" style="border-collapse: collapse; margin-top: 10px;">
-                                          <!-- Row 1: Cancellation Charges -->
-                                          <tr style="background-color: #eaeaea;">
-                                            <td style="padding: 10px;">
-                                              <strong>Cancellation Charges:</strong>
-                                            </td>
-                                          </tr>
-
-                                          <!-- Row 2: Alert Message -->
-                                          <tr style="background-color: rgb(255,239.5,193);">
-                                            <td style="padding: 10px; color: rgb(134.5,100.875,0);">
-                                              <v-icon color="rgb(134.5,100.875,0)" class="mr-1">
-                                                mdi-alert
-                                              </v-icon>
-                                              Booking subject to cancellation charges
-                                            </td>
-                                          </tr>
-
-                                          <!-- Row 3: Cancellation Policy Details -->
-                                          <tr>
-                                            <td style="padding: 10px;">
-                                              <span class="grey--text">
-                                                <span v-html="formatCancellationPolicy(roomOption.CancellationPolicy?.Description)" />
-                                              </span>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </v-col>
-                                    </v-row>
-                                  </v-col>
-                                </v-row>
-                                <!-- Toggle button to show more/less rooms -->
-                                <v-row justify="center">
-                                  <v-col cols="auto">
-                                    <v-btn
-                                      v-if="getRoomOptions(hotel.HotelOptions.HotelOption).length > 2"
-                                      small
-                                      class="text-body-1 text-brown font-weight-bold"
-                                      text
-                                      color="brown"
-                                      @click="toggleRoomDisplay(h)"
-                                    >
-                                      {{ showAllRoomsForHotel[h] ? 'See Less' : `See More (${hiddenRoomCount(hotel.HotelOptions.HotelOption)}+)` }}
-                                      <v-icon small>
-                                        {{ showAllRoomsForHotel[h] ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                                      </v-icon>
-                                    </v-btn>
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                            </v-card>
-                          </v-expand-transition>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-          <div class="d-flex justify-space-between mt-4 mb-1">
+                  <div v-if="isFetching" class="loading-spinner">
+                    <v-progress-circular
+                      indeterminate
+                      color="#8b5e34"
+                      size="24"
+                    />
+                  </div>
+                </v-card>
+              </v-col>
+            </v-row>
+          </div>
+          <!-- <div class="d-flex justify-space-between mt-4 mb-1">
             <button
               :disabled="pagination.current_page <= 1"
               class="pagination-btn"
@@ -930,7 +945,7 @@
             >
               Next
             </button>
-          </div>
+          </div> -->
         </v-container>
         <!-- new results end -->
       </div>
@@ -1236,6 +1251,7 @@
           </v-card>
         </v-col>
       </v-row>
+      <div ref="scrollTrigger" class="scroll-trigger" />
       <v-dialog v-model="showCheckout" max-width="900" content-class="rounded-xl hide-overflow" scrollable>
         <v-card>
           <v-card-title class="white--text" style="background-color: #4f3316;">
@@ -1329,6 +1345,7 @@ export default {
   },
   data () {
     return {
+      isFetching: false,
       travellersData: [],
       selectedRatings: [],
       ratingOptions: [],
@@ -1678,6 +1695,7 @@ export default {
   //   window.location.reload()
   // },
   mounted () {
+    // window.addEventListener('scroll', this.handleScroll)
     window.addEventListener('popstate', this.handleBackButton)
     this.priceSessionId = localStorage.getItem('priceSessionId')
     // eslint-disable-next-line nuxt/no-env-in-hooks
@@ -1688,9 +1706,16 @@ export default {
     //     hash: this.$route.hash
     //   })
     // }
+    this.$nextTick(() => {
+      this.setupObserver()
+    })
   },
 
   beforeDestroy () {
+    // window.removeEventListener('scroll', this.handleScroll)
+    if (this.observer) {
+      this.observer.disconnect()
+    }
     window.removeEventListener('popstate', this.handleBackButton)
   },
 
@@ -2625,38 +2650,85 @@ export default {
 
       window.open(url, '_blank')
     },
+    async handleScroll () {
+      const container = this.$refs.scrollContainer
+      if (
+        container.scrollTop + container.clientHeight >= container.scrollHeight - 50
+      ) {
+        await this.loadNextPage()
+      }
+    },
+    // async handleScroll () {
+    //   const container = this.$refs.scrollContainer
+
+    //   if (!container) { return }
+
+    //   const rect = container.getBoundingClientRect()
+    //   const isNearBottom =
+    //     rect.bottom <= window.innerHeight + 50 &&
+    //     this.pagination.current_page < this.pagination.last_page
+
+    //   if (isNearBottom && !this.isFetching) {
+    //     this.pagination.current_page++
+    //     await this.fetchHotelsByPage()
+    //   }
+    // },
+    setupObserver () {
+      const triggerElement = this.$refs.scrollTrigger
+
+      if (!triggerElement) {
+        console.error('Scroll trigger element not found.')
+        return
+      }
+
+      const observer = new IntersectionObserver(
+        async (entries) => {
+          const target = entries[0]
+          if (target.isIntersecting) {
+            await this.fetchHotelsByPage()
+          }
+        },
+        {
+          root: this.$refs.scrollContainer, // Observe within the container
+          threshold: 1.0 // Trigger when fully visible
+        }
+      )
+
+      observer.observe(triggerElement)
+    },
     async loadNextPage () {
       if (this.pagination.current_page < this.pagination.last_page) {
         this.pagination.current_page++
         await this.fetchHotelsByPage()
 
-        this.scrollToTop()
+        // this.scrollToTop()
       }
     },
-    async loadPreviousPage () {
-      if (this.pagination.current_page > 1) {
-        this.pagination.current_page--
+    // async loadPreviousPage () {
+    //   if (this.pagination.current_page > 1) {
+    //     this.pagination.current_page--
 
-        await this.fetchHotelsByPage()
+    //     await this.fetchHotelsByPage()
 
-        this.scrollToTop()
-      }
-    },
-    scrollToTop () {
-      this.$nextTick(() => {
-        const resultsContainerDiv = this.$refs.resultsContainer?.$el // Access the primary container
-        const noAvailabilityContainerDiv = this.$refs.NoAvailabilityContainer?.$el // Access the fallback container
+    //     this.scrollToTop()
+    //   }
+    // },
+    // scrollToTop () {
+    //   this.$nextTick(() => {
+    //     const resultsContainerDiv = this.$refs.resultsContainer?.$el
+    //     const noAvailabilityContainerDiv = this.$refs.NoAvailabilityContainer?.$el
 
-        if (resultsContainerDiv) {
-          resultsContainerDiv.scrollIntoView({ behavior: 'smooth' })
-        } else if (noAvailabilityContainerDiv) {
-          noAvailabilityContainerDiv.scrollIntoView({ behavior: 'smooth' })
-        }
-      })
-    },
+    //     if (resultsContainerDiv) {
+    //       resultsContainerDiv.scrollIntoView({ behavior: 'smooth' })
+    //     } else if (noAvailabilityContainerDiv) {
+    //       noAvailabilityContainerDiv.scrollIntoView({ behavior: 'smooth' })
+    //     }
+    //   })
+    // },
     async fetchHotelsByPage () {
-      this.isLoading = true
+      this.isFetching = true
       this.snackbar = false
+      // this.isLoading = true
 
       const page = this.pagination.current_page
       const pageSize = this.pagination.per_page || 100
@@ -2666,10 +2738,6 @@ export default {
         (page - 1) * pageSize,
         page * pageSize
       )
-
-      this.hotelAvailsArray = []
-      this.listGtaHotelDetails = []
-      this.filteredHotels = []
 
       const formData = new FormData()
       formData.append('start_date', this.hotelStartDate)
@@ -2712,62 +2780,72 @@ export default {
         const response = await hotelsServices.checkHotelAvailabilities(formData, page, pageSize)
         const availabilityRS = response?.data?.data?.AvailabilityRS
 
-        console.log('Backend Response:', response)
-
         if (!availabilityRS || availabilityRS?.Errors !== undefined) {
+          // "NO_AVAIL_FOUND"
+          if (availabilityRS?.Errors?.Error?.Code === 'NO_AVAIL_FOUND') {
+            console.log('No more hotels available to load.')
+            this.pagination.last_page = this.pagination.current_page
+            // this.isLoading = false
+            return
+          }
           console.error('Error in availabilityRS:', availabilityRS?.Errors)
-          // this.snackbar = true
-          this.minPrice = 0
-          this.maxPrice = 0
-          this.noAvailability = true
-          // this.color = 'error'
-          // this.text = availabilityRS?.Errors?.Error?.Text || 'Unfortunately, there is currently no availability found.'
-          this.loaded = false
-          this.isLoading = false
+          // this.noAvailability = true
+          // this.isAvailable = false
           return
-        } else {
-          this.isAvailable = true
         }
 
         let results = availabilityRS?.Results?.HotelResult
+        console.log(results)
 
         if (results && !Array.isArray(results)) {
           results = [results]
         }
 
         if (results.length > 0) {
+          this.isAvailable = true
           this.hotelAvailsArray.push(...results)
-          this.listGtaHotelDetails = [...this.listGtaHotelDetails, ...results]
-          this.filteredHotels = [...this.listGtaHotelDetails]
+          const uniqueResults = results.filter(
+            hotel => !this.filteredHotels.some(existing => existing.id === hotel.id)
+          )
+          this.filteredHotels.push(...uniqueResults)
 
-          console.log(`Page ${page} results:`, results)
+          // this.filteredHotels.push(...results)
+          console.log(this.filteredHotels)
+          this.listGtaHotelDetails.push(...results)
 
           this.calculatePriceRange()
           this.applyCombinedFilters()
 
           this.showSearch = false
+
+          // this.isLoading = false
         } else {
           console.log('No matching hotels found.')
-          this.filteredHotels = []
+          this.isAvailable = false
         }
 
         this.pagination.current_page = response.data.pagination.current_page || 1
         this.pagination.last_page = response.data.pagination.total_pages || 1
         this.pagination.total = response.data.pagination.total_hotels || 0
-        console.log(`Page ${this.pagination.current_page} availability:`, this.hotelAvailsArray)
       } catch (error) {
         console.error('Error fetching availability:', error)
-        this.snackbar = true
-        this.color = 'error'
-        this.text = 'An error occurred while fetching availability.'
+        // this.snackbar = true
+        // this.color = 'error'
+        // this.text = 'An error occurred while fetching availability.'
+        this.isAvailable = false
       } finally {
-        this.isLoading = false
+        this.isFetching = false
       }
     },
     async checkHotelAvailability () {
+      this.isLoading = true
       this.pagination.current_page = 1
       this.hotelAvailsArray = []
       await this.fetchHotelsByPage()
+      this.isLoading = false
+      this.$nextTick(() => {
+        this.setupObserver()
+      })
     },
     // async checkHotelAvailability () {
     //   this.isLoading = true
@@ -3752,4 +3830,46 @@ export default {
   overflow-y: auto;
 } */
 
+.scroll-container {
+  display: flex;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* border: 1px solid red; */
+}
+
+/* .scroll-container {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* scrollbar-width: none; */
+  /* -ms-overflow-style: none;
+} */
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+}
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  text-align: center;
+  flex-direction: column;
+  color: #a8814e;
+}
+.scroll-trigger {
+  height: 1px;
+  width: 100%;
+  margin-bottom: 10px;
+}
 </style>
