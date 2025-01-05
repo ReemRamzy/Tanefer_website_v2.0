@@ -93,11 +93,11 @@
                   </v-col>
                 </v-row> -->
                 <div class="gallery-container mb-3">
-                  <div class="main-image-container">
+                  <!-- Main Image Display -->
+                  <div class="main-image-container mb-2">
                     <v-img :src="currentMainImage" class="main-image" contain />
                     <v-btn
                       icon
-                      :style="{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
                       class="scroll-btn-left"
                       @click="prevImage"
                     >
@@ -105,7 +105,6 @@
                     </v-btn>
                     <v-btn
                       icon
-                      :style="{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', zIndex: 10 }"
                       class="scroll-btn-right"
                       @click="nextImage"
                     >
@@ -113,13 +112,12 @@
                     </v-btn>
                   </div>
 
+                  <!-- Thumbnails -->
                   <div class="thumbnails-container">
                     <v-img
                       v-for="(item, i) in cruiseImages"
                       :key="i"
                       :src="item.image"
-                      height="80"
-                      width="80"
                       class="thumbnail"
                       :class="{ active: currentImageIndex === i }"
                       @click="selectImage(i)"
@@ -693,7 +691,7 @@ export default {
 .hidden {
     display: none;
 }
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   ::v-deep .v-slide-group__wrapper {
     display: block !important;
     margin-left: 0 !important;
@@ -706,7 +704,7 @@ export default {
     margin-left: 0 !important;
     flex-direction: column !important;
     margin-left: -20px;
-}
+} */
 /* ::deep .v-image__image--cover {
     background-size: contain !important;
 } */
@@ -723,7 +721,6 @@ export default {
 /* .main-image-container {
   position: relative;
 } */
-
 .gallery-container {
   text-align: center;
   margin: 0 auto;
@@ -733,28 +730,72 @@ export default {
 
 .main-image-container {
   position: relative;
-  margin-bottom: 20px;
+  width: 400px; /* Fixed width for the frame */
+  height: 300px; /* Fixed height for the frame */
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #f7f3ef; /* Light background for better appearance */
+  display: flex; /* Enable flexbox */
+  justify-content: center; /* Horizontally center the image */
+  align-items: center; /* Vertically center the image */
+  margin: 0 auto; /* Center the container itself within the page */
 }
 
 .main-image {
-  border-radius: 8px;
-  object-fit: cover;
-  height: 300px;
   width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image fills the frame */
+  transition: transform 0.3s ease-in-out;
+}
+
+.main-image:hover {
+  transform: scale(1.03); /* Add a slight zoom effect on hover */
+}
+
+.scroll-btn-left,
+.scroll-btn-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(138, 89, 53, 0.8); /* Light brown background */
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.scroll-btn-left:hover,
+.scroll-btn-right:hover {
+  background-color: rgba(117, 76, 46, 0.9); /* Darker brown on hover */
+}
+
+.scroll-btn-left {
+  left: 10px;
+}
+
+.scroll-btn-right {
+  right: 10px;
 }
 
 .thumbnails-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Ensures consistent size */
+  gap: 10px; /* Space between thumbnails */
 }
 
 .thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover; /* Ensures image fits without distortion */
+  border-radius: 8px;
   cursor: pointer;
   border: 2px solid transparent;
-  border-radius: 8px;
-  object-fit: cover;
   transition: border 0.2s ease;
 }
 
