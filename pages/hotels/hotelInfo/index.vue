@@ -2093,6 +2093,7 @@ export default {
       }
     },
     async bookRoom (roomOption) {
+      console.log('triggred successfully', roomOption)
       this.hotelDetails = false
       try {
         this.isLoading = true
@@ -2109,12 +2110,14 @@ export default {
           return
         }
 
-        const hotelCode = this.hotelCodeJP
+        // const hotelCode = this.hotelCodeJP
+        const CodeOfHotel = this.gtaHotelDetails.JPCode
+        console.log('CodeOfHotel', CodeOfHotel)
         const formData = new FormData()
         formData.append('RatePlanCode', roomOption.RatePlanCode)
         formData.append('StartDate', startDate) // Use startDate from the store
         formData.append('EndDate', endDate) // Use endDate from the store
-        formData.append('HotelCode', hotelCode)
+        formData.append('HotelCode', CodeOfHotel)
 
         const promise = hotelsServices.getBookingRules(formData)
         const response = await promise

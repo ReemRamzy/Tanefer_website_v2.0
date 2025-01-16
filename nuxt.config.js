@@ -1,4 +1,4 @@
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
 
@@ -199,35 +199,35 @@ export default {
 
   generate: {
     fallback: true,
-    routes: async () => {
+    routes: () => {
       const routes = [
         '/',
         '/booking/trip',
-        '/adventures',
         '/booking/adventure',
         '/booking/cruise',
         '/comingSoon',
-        '/hotels',
-        '/cruises'
+        '/hotels'
       ]
 
-      try {
-        const citiesResponse = await axios.get('https://api.tanefer.com/api/v2/tours/list-city')
-        const cities = citiesResponse.data.cities
+      // try {
+      //   const citiesResponse = await axios.get('https://api.tanefer.com/api/v2/tours/list-city')
+      //   const cities = citiesResponse.data.cities
 
-        for (const city of cities) {
-          routes.push(`/adventures/${city.citySlug}`)
-          routes.push(`/cruises/${city.citySlug}`)
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error generating routes:', error)
-      }
+      //   for (const city of cities) {
+      //     routes.push(`/adventures/${city.citySlug}`)
+      //     routes.push(`/cruises/${city.citySlug}`)
+      //   }
+      // } catch (error) {
+      //   // eslint-disable-next-line no-console
+      //   console.error('Error generating routes:', error)
+      // }
 
       return routes
     },
     exclude: [
-      /^\/trips/
+      /^\/trips\/.*$/,
+      /^\/cruises\/.*$/,
+      /^\/adventures\/.*$/
     ]
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build

@@ -153,7 +153,7 @@
               </div> -->
             </div>
           </div>
-          <v-row>
+          <v-row align="stretch">
             <v-col v-for="trip in tripsResults" :key="trip.packageID" cols="12" md="4">
               <v-card class="package-card" elevation="2">
                 <!-- Image Header -->
@@ -194,7 +194,7 @@
                       <v-icon small>
                         mdi-information
                       </v-icon>
-                      {{ trip.packageOverview || 'No Overview Available' }}
+                      <TruncatedOverview :overview-html="trip.packageOverview" :max-length="150" />
                     </div>
                   </div>
                 </v-card-text>
@@ -254,11 +254,12 @@
 </template>
 
 <script>
+import DOMPurify from 'dompurify'
 import { mapState } from 'vuex'
 import tripsServices from '~/services/tripsServices'
 
 export default {
-  ssr: false,
+  ssr: true,
   data () {
     return {
       snackbar: false,
@@ -341,6 +342,9 @@ export default {
     this.getMetaData()
   },
   methods: {
+    sanitizeHtml (content) {
+      return DOMPurify.sanitize(content)
+    },
     showFilters () {
       document.getElementById('aside-filter-trip').style.left = 0
       document.getElementById('aside-filter-trip').style.backgroundColor = 'white'
@@ -530,6 +534,7 @@ export default {
   }
 
   .package-card {
+  min-height: 450px;
   border-radius: 10px;
   overflow: hidden;
 }

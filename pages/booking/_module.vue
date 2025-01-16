@@ -83,7 +83,7 @@
             <div v-if="$route.params.module === 'trip'" class="flight-review-border stiky">
               <div class="summry-title">
                 <span v-if="packageActivities">
-                  <h3>{{ packageActivities.packageTitle }} - {{ packageActivities.packageDuration }} Days / {{ packageActivities.packageNightsNumber }} Nights</h3>
+                  <h3>{{ packageActivities.packageTitle }} </h3>
                 </span>
               </div>
               <div v-if="packageActivities">
