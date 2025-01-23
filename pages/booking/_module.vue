@@ -4,7 +4,7 @@
       v-model="snackbar"
       :color="color"
       top
-      :timeout="5000"
+      :timeout="snackbarTimeout"
       auto-height
       vertical
     >
@@ -14,7 +14,7 @@
         <v-btn
           dark
           icon
-          @click="snackbar = false"
+          @click="closeSnackbar"
         >
           <v-icon color="white">
             mdi-close
@@ -244,204 +244,6 @@
       </div>
       <div v-if="confirmationPhase && !showTravellerData">
         <div v-if="$route.params.module === 'trip'">
-          <!-- <div class="airline-head">
-            <div class="airline-head-title">
-              Your trip was booked successfully
-            </div>
-          </div>
-          <div v-if="packageActivities">
-            <h2>
-              <strong>{{ packageActivities.packageTitle }}</strong>
-            </h2>
-            <h5>Start on: <strong>{{ packageStartDay }}</strong> for <strong>{{ packageActivities.packageDuration }}</strong> Days / <strong>{{ packageActivities.packageNightsNumber }}</strong> Nights</h5>
-            <h5 class="mb-5">
-              Price: <strong>${{ packageTotalAllPrice.toFixed(2) }}</strong>
-            </h5>
-            <div v-for="(activity, i) in packageActivities.activities" :key="i">
-              <v-expansion-panels v-model="panelExpandedActivities[i]" focusable class="mb-5">
-                <v-expansion-panel style="border-radius: 18px;">
-                  <v-expansion-panel-header class="font-weight-bold text-h6 change-icon-style" style="border-radius: 8px;">
-                    <v-row v-if="activity.type === 'adventure'">
-                      <v-col lg="6" md="6" sm="6">
-                        {{ activity.cityname }}
-                      </v-col>
-                      <v-col lg="6" md="6" sm="6">
-                        <span style="float: right;">
-                          <span class="quantity text-center font-weight-bold">{{ activity.days_number }} days</span>
-                        </span>
-                      </v-col>
-                    </v-row>
-                    <v-row v-else>
-                      <v-col cols="12">
-                        {{ activity.cityname }}
-                      </v-col>
-                    </v-row>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content class="my-8">
-                    <div v-if="activity.type === 'adventure'">
-                      <v-card v-for="(day, x) in activity.days" :key="x" class="my-2">
-                        <v-card-title class="white--text" style="background-color: #4f3316;">
-                          Day <span v-if="day.start_day !== null"> {{ day.start_day }}</span> <span v-if="day.start_text_day !== null" class="ml-4">{{ day.start_text_day }}</span>
-                        </v-card-title>
-                        <v-card-text class="pt-4">
-                          <v-row>
-                            <v-col cols="12">
-                              <div v-if="day.days.length > 0">
-                                <div v-for="(adventures, adventureIndex) in day.days" :key="adventureIndex">
-                                  <div v-if="adventures.adventrue">
-                                    <v-row>
-                                      <v-col cols="12">
-                                        {{ adventures.adventrue.activityTitle }}
-                                      </v-col>
-                                    </v-row>
-                                  </div>
-                                  <v-divider class="my-2" />
-                                </div>
-                              </div>
-                              <div v-else>
-                                You Have Free Time
-                              </div>
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                      </v-card>
-                    </div>
-                    <div v-else>
-                      <v-card class="my-2">
-                        <v-card-title class="white--text" style="background-color: #4f3316;display: flow-root;">
-                          <span class="float-left">Day {{ activity.package_day }}</span> <span v-if="packageStartDay !== null" class="ml-4">{{ activity.package_text_day }}</span> <span class="float-right">Nile Cruise</span>
-                        </v-card-title>
-                        <v-card-text class="pt-4">
-                          <v-row>
-                            <v-col cols="12">
-                              <div v-for="(cruise, c) in activity.cruise" :key="c">
-                                <v-row class="">
-                                  <v-col v-if="cruise.master_image" cols="12" md="4" class="pt-4">
-                                    <v-img
-                                      max-height="350"
-                                      :src="cruise.master_image"
-                                      max-width="250"
-                                      class="rounded-lg"
-                                    />
-                                  </v-col>
-                                  <v-col cols="10" :md="cruise.master_image ? 6 : 10">
-                                    <div class="cruise-result-trip justify-space-between pt-4">
-                                      <div>
-                                        <h5 class="text-h5 font-weight-bold">
-                                          {{ cruise.name }}
-                                        </h5>
-                                      </div>
-                                    </div>
-                                  </v-col>
-                                </v-row>
-                              </div>
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                      </v-card>
-                    </div>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </div>
-            <div>
-              <v-expansion-panels v-model="numberOfPassenger.hotelJPCode" focusable class="mb-5">
-                <v-expansion-panel style="border-radius: 18px;">
-                  <v-expansion-panel-header class="font-weight-bold text-h6 change-icon-style" style="border-radius: 8px;">
-                    <v-row>
-                      <v-col cols="12">
-                        Accommodation
-                      </v-col>
-                    </v-row>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content class="my-8">
-                    <v-row>
-                      <v-col
-                        v-for="(booking, index) in multipleBookingResponse"
-                        :key="index"
-                        cols="12"
-                        md="12"
-                      >
-                        <v-card outlined class="pa-3 mb-4">
-                          <v-list dense>
-                            <v-list-item>
-                              <v-list-item-icon>
-                                <v-icon>mdi-hotel</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title>
-                                  <strong class="text-h6"> {{ booking.hotelName || 'N/A' }} </strong>
-                                </v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-
-                            <v-list-item>
-                              <v-list-item-icon>
-                                <v-icon>mdi-map-marker</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title>
-                                  <strong>Address:</strong> {{ booking.address || 'N/A' }}
-                                </v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-
-                            <v-list-item>
-                              <v-list-item-icon>
-                                <v-icon>mdi-currency-usd</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title>
-                                  <strong>Total Price:</strong> ${{ booking.totalPrice || 'N/A' }}
-                                </v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-
-                            <v-list-item>
-                              <v-list-item-icon>
-                                <v-icon>mdi-bed</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title>
-                                  <strong> {{ booking.board || 'N/A' }} - </strong> {{ booking.roomType || 'N/A' }}
-                                </v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-
-                            <v-list-item>
-                              <v-list-item-icon>
-                                <v-icon>mdi-alert-circle-outline</v-icon>
-                              </v-list-item-icon>
-                              <v-list-item-content>
-                                <v-list-item-title>
-                                  <strong>Others:</strong>
-                                  <div v-html="booking.comments || 'N/A'" />
-                                </v-list-item-title>
-                              </v-list-item-content>
-                            </v-list-item>
-                          </v-list>
-                        </v-card>
-                      </v-col>
-                    </v-row>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </div>
-          </div>
-          <div style="display: flex; gap: 1rem; align-items: center;">
-            <v-btn
-              class="brown white--text py-5 mt-5 mr-5 px-12"
-              @click="openBookFlight"
-            >
-              Book Flight
-            </v-btn>
-            <v-btn
-              class="brown white--text py-5 mt-5 mr-5 px-12"
-              @click="redirectPageTrips"
-            >
-              Check Trips
-            </v-btn>
-          </div> -->
           <v-container class="fill-height d-flex justify-center align-center" fluid>
             <v-card
               class="rounded-xl pa-5"
@@ -764,90 +566,6 @@
                 Check More Hotels
               </v-btn>
             </v-card>
-
-            <!-- <v-container class="py-10">
-              <v-card class="mx-auto pa-5 elevation-2" max-width="800">
-                <v-row align="center">
-                  <v-col cols="12">
-                    <h2 class="text-h4 font-weight-bold text-center mb-5">
-                      Hotel Booking Confirmation
-                    </h2>
-                  </v-col>
-                  <v-col cols="12" md="8">
-                    <v-card-title class="headline font-weight-bold">
-                      Your Hotel was booked successfully!
-                    </v-card-title>
-                    <v-card-subtitle>
-                      Thank you for booking with us. Here are your booking details.
-                    </v-card-subtitle>
-                  </v-col>
-                </v-row>
-                <v-divider class="my-4" />
-
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-icon class="mr-2">
-                      mdi-hotel
-                    </v-icon>
-                    <strong>Hotel Name:</strong> {{ bookingResponse?.HotelContent?.HotelName || 'N/A' }}
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-icon class="mr-2">
-                      mdi-star
-                    </v-icon>
-                    <strong>Category:</strong> {{ bookingResponse?.HotelCategory?._ || 'N/A' }}
-                  </v-col>
-                  <v-col cols="12">
-                    <v-icon class="mr-2">
-                      mdi-map-marker
-                    </v-icon>
-                    <strong>Address:</strong> {{ bookingResponse?.Address?.Address || 'N/A' }}
-                  </v-col>
-                </v-row>
-
-                <v-divider class="my-4" />
-
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-icon class="mr-2">
-                      mdi-currency-usd
-                    </v-icon>
-                    <strong>Total Price:</strong> ${{ bookingResponse?.Prices?.Price?.TotalFixAmounts?.Nett || 'N/A' }}
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-icon class="mr-2">
-                      mdi-bed
-                    </v-icon>
-                    <strong>Room Type:</strong> {{ bookingResponse?.HotelRooms?.HotelRoom?.Name || 'N/A' }}
-                  </v-col>
-                </v-row>
-
-                <v-divider class="my-4" />
-
-                <v-row>
-                  <v-col cols="12">
-                    <v-icon class="mr-2">
-                      mdi-information-outline
-                    </v-icon>
-                    <strong>Cancellation Policy:</strong> {{ bookingResponse?.CancellationPolicy?.Description || 'N/A' }}
-                  </v-col>
-                </v-row>
-
-                <v-divider class="my-4" />
-
-                <v-btn
-                  class="brown white--text py-5 mt-5 mr-5 px-12"
-                  outlined
-                  color="primary"
-                  @click="redirectPageHotels"
-                >
-                  Check More Hotels
-                </v-btn>
-                <v-btn class="brown white--text py-5 mt-5 mr-5 px-12" @click="handleLinkClick('home')">
-                  Continue Browsing
-                </v-btn>
-              </v-card>
-            </v-container> -->
           </div>
         <!-- </NuxtLink> -->
         </div>
@@ -925,7 +643,9 @@ export default {
       hotelEndDates: [],
       finalBookHotelsFormData: [],
       hotelJPCodes: [],
-      checkHasCruise: false
+      checkHasCruise: false,
+      snackbarTimeout: 5000,
+      redirectOnClose: false
     }
   },
   head () {
@@ -1293,9 +1013,10 @@ export default {
           } else {
             const customTextMessage = bookingData.custom_text_message
             this.loading = false
-            this.snackbar = true
-            this.color = '#4f3316'
-            this.text = customTextMessage
+            // this.snackbar = true
+            // this.color = '#4f3316'
+            // this.text = customTextMessage
+            this.showSnackbar(customTextMessage, '#4f3316', true, true)
           }
         } else if (this.$route.params.module === 'adventure') {
           const promise = adventureServices.bookAdventure(body)
@@ -1339,9 +1060,20 @@ export default {
         this.text = 'Something went wrong please try again in few minutes'
       }
     },
+    showSnackbar (message, customColor, noTimeout = false, redirectOnClose = false) {
+      this.snackbar = true
+      this.text = message
+      this.color = customColor || 'primary'
+      this.snackbarTimeout = noTimeout ? -1 : 5000
+      this.redirectOnClose = redirectOnClose
+    },
+    closeSnackbar () {
+      this.snackbar = false
+      if (this.redirectOnClose) {
+        window.location.href = '/'
+      }
+    },
     confirmBooking () {
-      // ?amount=110000&response_code=14000&card_number=****************&card_holder_name=****&signature=365e3f128cd3229c8908fc2f3e2da63ea1b18b1b309652b5ee492e4e79cd0d7c&merchant_identifier=CwCfehEU&access_code=Xnx4srzFskSSrNGkxlr8&payment_option=VISA&expiry_date=****&customer_ip=**************&language=en&eci=ECOMMERCE&fort_id=169996200010637834&command=PURCHASE&merchant_extra=5&response_message=Success&merchant_reference=TANEFER-5805816523&authorization_code=736332&customer_email=***********************&currency=USD&status=14
-      // console.log(window.location.href)
       const query = this.$route.fullPath.split('?')[1] + '&url=' + window.location.href
       tripsServices.confirmTripBooking(query)
     },

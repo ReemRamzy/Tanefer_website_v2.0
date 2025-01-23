@@ -2862,7 +2862,7 @@ export default {
       menu: null,
       travellers: 0,
       children: 0,
-      ages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+      ages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
       ageSelects: [],
       showAgesSelects: false,
       selectedAdventures: [],
@@ -3699,6 +3699,7 @@ export default {
       return []
     },
     async getPackage () {
+      this.isLoading = true
       const promise = tripsServices.getTripDetails(this.$route.params.slug)
       const response = await promise
       const results = response.data
@@ -3761,6 +3762,7 @@ export default {
       }
       this.calcDaysFromDetails()
       this.panelExpandedActivities = this.packageDetails.activities.map(() => 0)
+      this.isLoading = false
     },
     getCityImage (name) {
       let img = ''

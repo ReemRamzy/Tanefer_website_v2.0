@@ -154,8 +154,14 @@
             </div>
           </div>
           <v-row align="stretch">
-            <v-col v-for="trip in tripsResults" :key="trip.packageID" cols="12" md="4">
-              <v-card class="package-card" elevation="2">
+            <v-col
+              v-for="trip in tripsResults"
+              :key="trip.packageID"
+              cols="12"
+              md="4"
+              class="d-flex"
+            >
+              <v-card class="d-flex flex-column card-container" elevation="2">
                 <!-- Image Header -->
                 <v-img
                   :src="trip.packageImage.startsWith('http')
@@ -165,43 +171,48 @@
                   class="white--text package-card-header"
                 >
                   <div class="package-title">
-                    {{ trip.packageTitle || 'No Title Available' }}
+                    {{ trip.packageTitle || "No Title Available" }}
                   </div>
                 </v-img>
 
-                <!-- Main Details -->
-                <v-card-text>
-                  <div class="package-details">
-                    <!-- <div class="detail-item">
-                      <v-icon small>
-                        mdi-map-marker
-                      </v-icon>
-                      {{ trip.packageCities?.map(city => city.cityName).join(', ') || 'Unknown City' }}
-                    </div> -->
+                <!-- Main Content (Scrollable if needed) -->
+                <v-card-text class="flex-grow-1 overflow-hidden">
+                  <div class="package-details" style="max-height: 150px; overflow-y: auto;">
                     <div class="detail-item">
                       <v-icon small>
                         mdi-calendar
                       </v-icon>
-                      {{ trip.packageNightsNumber || 'N/A' }} Nights
+                      {{ trip.packageNightsNumber || "N/A" }} Nights
                     </div>
                     <div class="detail-item">
                       <v-icon small>
                         mdi-currency-usd
                       </v-icon>
-                      Starting From: {{ trip.intialprice }}
+                      Starting From: {{ trip.intialprice }} USD
                     </div>
                     <div v-if="trip.packageOverview" class="detail-item">
                       <v-icon small>
                         mdi-information
                       </v-icon>
-                      <TruncatedOverview :overview-html="trip.packageOverview" :max-length="150" />
+                      <!-- Truncated Overview with "See More/Less" -->
+                      <TruncatedOverview
+                        :overview-html="trip.packageOverview"
+                        :max-length="150"
+                        :expand-on-click="true"
+                      />
                     </div>
                   </div>
                 </v-card-text>
 
-                <!-- CTA Button -->
+                <!-- CTA Button at the Bottom -->
                 <v-card-actions>
-                  <v-btn color="#bd9468" @click="$router.push({name: 'trips-city-slug', params: {city: tripsCity.citySlug, slug: trip.packageSlug}})">
+                  <v-btn
+                    color="#bd9468"
+                    @click="$router.push({
+                      name: 'trips-city-slug',
+                      params: { city: tripsCity.citySlug, slug: trip.packageSlug }
+                    })"
+                  >
                     View Details
                   </v-btn>
                 </v-card-actions>

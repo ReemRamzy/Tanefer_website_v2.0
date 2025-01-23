@@ -21,16 +21,16 @@
       </template>
       <v-card max-height="500" color="white">
         <v-card-text style="max-height: 500px; overflow: auto;">
+          <div class="rooms my-4">
+            <span class="label">Rooms</span>
+            <span class="minus" @click="decrease('rooms')"><v-icon color="white" small>mdi-minus</v-icon></span>
+            <span id="room" class="number">{{ roomsNum }}</span>
+            <span class="plus" @click="increase('rooms')"><v-icon color="white" small>mdi-plus</v-icon></span>
+          </div>
           <div v-for="n in roomsNum" :key="n" class="inputs">
             <v-row>
               <v-col cols="12" sm="6" class="p-5 my-0">
-                <div v-if="n === 1" class="rooms my-4">
-                  <span class="label">Rooms</span>
-                  <span class="minus" @click="decrease('rooms')"><v-icon color="white" small>mdi-minus</v-icon></span>
-                  <span id="room" class="number">1</span>
-                  <span class="plus" @click="increase('rooms')"><v-icon color="white" small>mdi-plus</v-icon></span>
-                </div>
-                <div v-else class="room-text">
+                <div class="room-text">
                   Room {{ n }}
                 </div>
                 <div class="adults my-4">
@@ -153,6 +153,107 @@ export default {
     // }
   },
   methods: {
+    // increase (type, n, i) {
+    //   switch (type) {
+    //     case 'rooms':
+    //       if (this.roomsNum > 5) { this.roomsNum = 6 } else { this.roomsNum += 1 }
+    //       document.getElementById('room').innerText = this.roomsNum
+    //       this.adults.push(1)
+    //       this.children.push(0)
+    //       break
+    //     case 'adults':
+    //       if (this.adults[n - 1] > 5) { this.adults[n - 1] = 6 } else {
+    //         this.adults[n - 1] === undefined ? this.adults[n - 1] = 2 : this.adults[n - 1] = this.adults[n - 1] + 1
+    //       }
+    //       document.getElementById(`adult${n}`).innerText = this.adults[n - 1]
+    //       break
+    //     case 'children':
+    //       if (this.$route.name === 'cruises-city-id') {
+    //         this.children[n - 1] = 1
+    //       } else if (this.$route.name !== 'cruises-city-id') {
+    //         if (this.children[n - 1] > 3) {
+    //           this.children[n - 1] = 4
+    //         } else {
+    //           this.children[n - 1] === undefined ? this.children[n - 1] = 1 : this.children[n - 1] = this.children[n - 1] + 1
+    //         }
+    //       }
+    //       document.getElementById(`child${n}`).innerText = String(this.children[n - 1])
+    //       this.childrenNum[n - 1] = this.children[n - 1]
+    //       if (this.childrenNum[n - 1] > 0) {
+    //         document.getElementById(`ages${n}`).style.display = 'flex'
+    //         switch (n) {
+    //           case 1:
+    //             this.childrenNumber1 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //           case 2:
+    //             this.childrenNumber2 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //           case 3:
+    //             this.childrenNumber3 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //           case 4:
+    //             this.childrenNumber4 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //           case 5:
+    //             this.childrenNumber5 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //           case 6:
+    //             this.childrenNumber6 = this.childrenNum[n - 1]
+    //             this.childrenAges.push(1)
+    //             break
+    //         }
+    //       } else { document.getElementById(`ages${n}`).style.display = 'none' }
+    //       break
+    //     case 'age':
+    //       switch (n) {
+    //         case 1:
+    //           if (this.childrenAges[i - 1] > 11) { this.childrenAges[i - 1] = 18 } else {
+    //             this.childrenAges[i - 1] === undefined ? this.childrenAges[i - 1] = 2 : this.childrenAges[i - 1] = this.childrenAges[i - 1] + 1
+    //           }
+    //           document.getElementById(`age${i}`).innerText = this.childrenAges[i - 1]
+    //           break
+    //         case 2:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber1] = 18 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber1] + 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber1]
+    //           break
+    //         case 3:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] + 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 4:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 5:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 6:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //       }
+    //       break
+    //     default:
+    //       break
+    //   }
+    //   this.save()
+    // },
     increase (type, n, i) {
       switch (type) {
         case 'rooms':
@@ -162,17 +263,21 @@ export default {
           this.children.push(0)
           break
         case 'adults':
-          if (this.adults[n - 1] > 5) { this.adults[n - 1] = 6 } else {
+          if (this.adults[n - 1] > 2) { this.adults[n - 1] = 3 } else {
             this.adults[n - 1] === undefined ? this.adults[n - 1] = 2 : this.adults[n - 1] = this.adults[n - 1] + 1
           }
           document.getElementById(`adult${n}`).innerText = this.adults[n - 1]
           break
         case 'children':
           if (this.$route.name === 'cruises-city-id') {
-            this.children[n - 1] = 1
+            if (this.children[n - 1] >= 2) {
+              this.children[n - 1] = 2
+            } else {
+              this.children[n - 1] === undefined ? this.children[n - 1] = 1 : this.children[n - 1] = this.children[n - 1] + 1
+            }
           } else if (this.$route.name !== 'cruises-city-id') {
-            if (this.children[n - 1] > 3) {
-              this.children[n - 1] = 4
+            if (this.children[n - 1] >= 2) {
+              this.children[n - 1] = 2
             } else {
               this.children[n - 1] === undefined ? this.children[n - 1] = 1 : this.children[n - 1] = this.children[n - 1] + 1
             }
@@ -190,67 +295,28 @@ export default {
                 this.childrenNumber2 = this.childrenNum[n - 1]
                 this.childrenAges.push(1)
                 break
-              case 3:
-                this.childrenNumber3 = this.childrenNum[n - 1]
-                this.childrenAges.push(1)
-                break
-              case 4:
-                this.childrenNumber4 = this.childrenNum[n - 1]
-                this.childrenAges.push(1)
-                break
-              case 5:
-                this.childrenNumber5 = this.childrenNum[n - 1]
-                this.childrenAges.push(1)
-                break
-              case 6:
-                this.childrenNumber6 = this.childrenNum[n - 1]
-                this.childrenAges.push(1)
-                break
+              // Remove cases 3-6
             }
           } else { document.getElementById(`ages${n}`).style.display = 'none' }
           break
         case 'age':
           switch (n) {
             case 1:
-              if (this.childrenAges[i - 1] > 11) { this.childrenAges[i - 1] = 18 } else {
+              if (this.childrenAges[i - 1] >= 11) { this.childrenAges[i - 1] = 11 } else {
                 this.childrenAges[i - 1] === undefined ? this.childrenAges[i - 1] = 2 : this.childrenAges[i - 1] = this.childrenAges[i - 1] + 1
               }
               document.getElementById(`age${i}`).innerText = this.childrenAges[i - 1]
               break
             case 2:
-              if (this.childrenAges[(i - 1) + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber1] = 18 } else {
+              if (this.childrenAges[(i - 1) + this.childrenNumber1] >= 11) { this.childrenAges[(i - 1) + this.childrenNumber1] = 11 } else {
                 this.childrenAges[(i - 1) + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber1] + 1
               }
               document.getElementById(`age${i + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber1]
               break
-            case 3:
-              if (this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] + 1
-              }
-              document.getElementById(`age${i + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 4:
-              if (this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
-              }
-              document.getElementById(`age${i + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 5:
-              if (this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
-              }
-              document.getElementById(`age${i + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 6:
-              if (this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] > 11) { this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 18 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 2 : this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] + 1
-              }
-              document.getElementById(`age${i + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
+            // Remove cases 3-6
           }
           break
-        default:
-          break
+        // ... other cases remain the same
       }
       this.save()
     },
@@ -288,22 +354,7 @@ export default {
                 this.childrenNumber2 = this.childrenNum[n - 1]
                 this.childrenAges.splice((n - 1), 1)
                 break
-              case 3:
-                this.childrenNumber3 = this.childrenNum[n - 1]
-                this.childrenAges.splice((n - 1), 1)
-                break
-              case 4:
-                this.childrenNumber4 = this.childrenNum[n - 1]
-                this.childrenAges.splice((n - 1), 1)
-                break
-              case 5:
-                this.childrenNumber5 = this.childrenNum[n - 1]
-                this.childrenAges.splice((n - 1), 1)
-                break
-              case 6:
-                this.childrenNumber6 = this.childrenNum[n - 1]
-                this.childrenAges.splice((n - 1), 1)
-                break
+              // Remove cases 3-6 as we're limiting to 2 children
             }
           } else { document.getElementById(`ages${n}`).style.display = 'none' }
           break
@@ -321,30 +372,7 @@ export default {
               }
               document.getElementById(`age${i + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber1]
               break
-            case 3:
-              if (this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] - 1
-              }
-              document.getElementById(`age${i + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 4:
-              if (this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
-              }
-              document.getElementById(`age${i + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 5:
-              if (this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
-              }
-              document.getElementById(`age${i + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
-            case 6:
-              if (this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
-                this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
-              }
-              document.getElementById(`age${i + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
-              break
+            // Remove cases 3-6 as we're limiting to 2 children
           }
           break
         default:
@@ -352,6 +380,104 @@ export default {
       }
       this.save()
     },
+    // decrease (type, n, i) {
+    //   switch (type) {
+    //     case 'rooms':
+    //       if (this.roomsNum < 2) { this.roomsNum = 1 } else { this.roomsNum -= 1 }
+    //       document.getElementById('room').innerText = this.roomsNum
+    //       for (let i = 0; i < this.children[this.children.length - 1]; i++) {
+    //         this.childrenAges.pop()
+    //       }
+    //       this.adults.pop()
+    //       this.children.pop()
+    //       break
+    //     case 'adults':
+    //       if (this.adults[n - 1] < 2) { this.adults[n - 1] = 1 } else {
+    //         this.adults[n - 1] === undefined ? this.adults[n - 1] = 1 : this.adults[n - 1] = this.adults[n - 1] - 1
+    //       }
+    //       document.getElementById(`adult${n}`).innerText = this.adults[n - 1]
+    //       break
+    //     case 'children':
+    //       if (this.children[n - 1] < 1) { this.children[n - 1] = 0 } else {
+    //         this.children[n - 1] === undefined ? this.children[n - 1] = 0 : this.children[n - 1] = this.children[n - 1] - 1
+    //       }
+    //       document.getElementById(`child${n}`).innerText = this.children[n - 1]
+    //       this.childrenNum[n - 1] = this.children[n - 1]
+    //       if (this.childrenNum[n - 1] > 0) {
+    //         document.getElementById(`ages${n}`).style.display = 'flex'
+    //         switch (n) {
+    //           case 1:
+    //             this.childrenNumber1 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //           case 2:
+    //             this.childrenNumber2 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //           case 3:
+    //             this.childrenNumber3 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //           case 4:
+    //             this.childrenNumber4 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //           case 5:
+    //             this.childrenNumber5 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //           case 6:
+    //             this.childrenNumber6 = this.childrenNum[n - 1]
+    //             this.childrenAges.splice((n - 1), 1)
+    //             break
+    //         }
+    //       } else { document.getElementById(`ages${n}`).style.display = 'none' }
+    //       break
+    //     case 'age':
+    //       switch (n) {
+    //         case 1:
+    //           if (this.childrenAges[i - 1] < 2) { this.childrenAges[i - 1] = 1 } else {
+    //             this.childrenAges[i - 1] === undefined ? this.childrenAges[i - 1] = 1 : this.childrenAges[i - 1] = this.childrenAges[i - 1] - 1
+    //           }
+    //           document.getElementById(`age${i}`).innerText = this.childrenAges[i - 1]
+    //           break
+    //         case 2:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber1] = 1 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber1] - 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber1]
+    //           break
+    //         case 3:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1] - 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 4:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 5:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //         case 6:
+    //           if (this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] < 2) { this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 } else {
+    //             this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] === undefined ? this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = 1 : this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1] - 1
+    //           }
+    //           document.getElementById(`age${i + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1}`).innerText = this.childrenAges[(i - 1) + this.childrenNumber5 + this.childrenNumber4 + this.childrenNumber3 + this.childrenNumber2 + this.childrenNumber1]
+    //           break
+    //       }
+    //       break
+    //     default:
+    //       break
+    //   }
+    //   this.save()
+    // },
     save () {
       this.guests = []
       for (let i = 0; i < this.adults.length; i++) {

@@ -4,7 +4,8 @@
     <LoadingScreen v-if="loading" />
     <site-nav-bar />
     <v-main>
-      <Nuxt keep-alive />
+      <!-- <Nuxt keep-alive /> -->
+      <nuxt :key="$route.fullPath" />
     </v-main>
     <site-footer />
   </v-app>
