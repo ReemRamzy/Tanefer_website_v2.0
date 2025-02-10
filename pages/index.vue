@@ -417,47 +417,6 @@
           </div>
         </div>
       </section>
-      <section class="blog-sectio">
-        <div class="t-container">
-          <h2 data-w-id="c8d7d3c8-2eba-017b-6dce-0ea0239bba27" class="home-section-title home-blog-title">
-            Latest stories
-          </h2>
-          <p data-w-id="dd42bd95-1907-180d-e2bc-80edfa9a6efa" class="home-plog-p">
-            One inspiring story is worth traveling. Discover more about tradition and history. Read the stories that make you want to travel.
-          </p>
-          <div class="home-blog-row">
-            <div v-for="post in posts.slice(0, 3)" :key="post.post_date_gmt" class="blog-col">
-              <a :href="post.articleUrl" class="w-inline-block">
-                <img :src="post.featuredImg" loading="lazy" alt="">
-                <div class="home-post-date">{{ post.post_date }}</div>
-                <div class="home-post-title">{{ post.post_title }}</div>
-              </a>
-            </div>
-            <!-- <div data-w-id="fd0c4ff5-5379-8fdd-3742-293a91eba6d0" class="blog-col">
-              <a href="https://tanefer.com/blog/egypt-the-first-state-ever/" class="w-inline-block">
-                <img src="~/assets/images/post1.jpg" loading="lazy" alt="">
-                <div class="home-post-date">April 26, 2019</div>
-                <div class="home-post-title">Egypt the First State Ever</div>
-              </a>
-            </div>
-            <div data-w-id="2d18928f-b95f-1c14-d608-02bcf415b54f" class="blog-col">
-              <a href="https://tanefer.com/blog/egyptian-empire/" class="w-inline-block"><img src="~/assets/images/post3.jpg" loading="lazy" alt="">
-                <div class="home-post-date">May 13, 2019</div>
-                <div class="home-post-title">Egyptian Empire</div>
-              </a>
-            </div>
-            <div data-w-id="c8cb3511-f607-c19c-6f16-0cc1af296bdb" class="blog-col">
-              <a href="https://tanefer.com/blog/hellenistic-egypt/" class="w-inline-block"><img src="~/assets/images/post2.jpg" loading="lazy" alt="">
-                <div class="home-post-date">June 22, 2019</div>
-                <div class="home-post-title">Hellenistic Egypt</div>
-              </a>
-            </div> -->
-          </div>
-          <div data-w-id="ccf02149-becd-9829-4099-aa99d46b54e9" class="align-center">
-            <a href="https://tanefer.com/blog/about-tanefer/" class="min-bt">Read more stories</a>
-          </div>
-        </div>
-      </section>
     </div>
   </div>
 </template>
