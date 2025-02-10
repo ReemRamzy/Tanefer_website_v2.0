@@ -524,7 +524,7 @@ export default {
     this.$store.dispatch('loading/startLoading')
     await this.getMetaData()
     this.$store.dispatch('loading/stopLoading')
-    await this.getPosts()
+    // await this.getPosts()
   },
   beforeDestroy () {
     this.$store.dispatch('loading/stopLoading')

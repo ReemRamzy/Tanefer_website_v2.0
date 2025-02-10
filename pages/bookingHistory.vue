@@ -245,122 +245,11 @@ export default {
       return txt.value
     },
 
-    // generatePdf (booking) {
-    //   // eslint-disable-next-line new-cap
-    //   const doc = new jsPDF()
-    //   const marginLeft = 10
-    //   let currentY = 20
-
-    //   // Title
-    //   doc.setFontSize(20)
-    //   doc.setFont('helvetica', 'bold')
-    //   doc.setTextColor(150, 119, 70) // Gold color (A08458)
-    //   doc.text('Booking Details', marginLeft, currentY)
-    //   currentY += 15
-
-    //   // General Details
-    //   const generalDetails = [
-    //     ['Field', 'Details'],
-    //     ['Type', booking.type || 'N/A'],
-    //     ['Title', this.this.decodeHtmlEntities(booking.title) || 'N/A'],
-    //     ['Order Date', booking.date || 'N/A'],
-    //     ['Duration', booking.duration || 'N/A'],
-    //     ['Total Fees', `$${booking.total?.toFixed(2) || 'N/A'}`],
-    //     ['Status', booking.status || 'N/A']
-    //   ]
-    //   doc.autoTable({
-    //     startY: currentY,
-    //     head: [generalDetails[0]],
-    //     body: generalDetails.slice(1),
-    //     styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] }, // Darker shade (966B47)
-    //     headStyles: { fillColor: [150, 119, 70], textColor: [255, 255, 255] }, // Gold Header (A08458)
-    //     alternateRowStyles: { fillColor: [245, 235, 215] } // Light Beige Rows
-    //   })
-    //   currentY = doc.lastAutoTable.finalY + 10
-
-    //   // Adventures Section
-    //   if (booking.adventures && booking.adventures.length > 0) {
-    //     doc.setFontSize(16)
-    //     doc.setTextColor(150, 119, 70) // Gold color (A08458)
-    //     doc.text('Adventures Included', marginLeft, currentY)
-    //     currentY += 10
-
-    //     booking.adventures.forEach((adventure, index) => {
-    //       doc.setFontSize(12)
-    //       doc.setTextColor('#966B47') // Darker shade (966B47)
-    //       doc.text(`${index + 1}. ${this.this.decodeHtmlEntities(adventure.title)}`, marginLeft, currentY)
-    //       currentY += 8
-
-    //       const adventureDetails = [
-    //         ['Field', 'Details'],
-    //         ['Overview', this.this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
-    //         ['Intro', this.this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
-    //         ['Itinerary', this.this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
-    //         ['Includes', JSON.parse(adventure.includes || '[]').join('\n- ') || 'N/A'],
-    //         ['Excludes', JSON.parse(adventure.excludes || '[]').join('\n- ') || 'N/A']
-    //       ]
-    //       doc.autoTable({
-    //         startY: currentY,
-    //         head: [adventureDetails[0]],
-    //         body: adventureDetails.slice(1),
-    //         styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] }, // Darker shade (966B47)
-    //         headStyles: { fillColor: [150, 119, 70], textColor: [255, 255, 255] }, // Gold Header (A08458)
-    //         alternateRowStyles: { fillColor: [245, 235, 215] } // Light Beige Rows
-    //       })
-    //       currentY = doc.lastAutoTable.finalY + 10
-    //     })
-    //   } else {
-    //     doc.setTextColor('#966B47') // Darker shade (966B47)
-    //     doc.text('No adventures included.', marginLeft, currentY)
-    //     currentY += 10
-    //   }
-
-    //   // Hotels Section
-    //   if (booking.hotels && booking.hotels.length > 0) {
-    //     doc.setFontSize(16)
-    //     doc.setTextColor(150, 119, 70) // Gold color (A08458)
-    //     doc.text('Accommodation Details', marginLeft, currentY)
-    //     currentY += 10
-
-    //     booking.hotels.forEach((hotel, index) => {
-    //       doc.setFontSize(12)
-    //       doc.setTextColor('#966B47') // Darker shade (966B47)
-    //       doc.text(`${index + 1}. ${this.this.decodeHtmlEntities(hotel.hotel_name)}`, marginLeft, currentY)
-    //       currentY += 8
-
-    //       const hotelDetails = [
-    //         ['Field', 'Details'],
-    //         ['Hotel Name', this.this.decodeHtmlEntities(hotel.hotel_name || 'N/A')],
-    //         ['Start Date', hotel.start_date || 'N/A'],
-    //         ['End Date', hotel.end_date || 'N/A'],
-    //         ['Locator', hotel.locator || 'N/A']
-    //       ]
-    //       doc.autoTable({
-    //         startY: currentY,
-    //         head: [hotelDetails[0]],
-    //         body: hotelDetails.slice(1),
-    //         styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] }, // Darker shade (966B47)
-    //         headStyles: { fillColor: [150, 119, 70], textColor: [255, 255, 255] }, // Gold Header (A08458)
-    //         alternateRowStyles: { fillColor: [245, 235, 215] } // Light Beige Rows
-    //       })
-    //       currentY = doc.lastAutoTable.finalY + 10
-    //     })
-    //   } else {
-    //     doc.setFontSize(12)
-    //     doc.setTextColor('#966B47') // Darker shade (966B47)
-    //     doc.text('No accommodation reserved.', marginLeft, currentY)
-    //     currentY += 10
-    //   }
-
-    //   // Save PDF
-    //   doc.save(`${this.this.decodeHtmlEntities(booking.title) || 'Booking'}.pdf`)
-    // }
-
     generatePdf (booking) {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF()
       const marginLeft = 10
-      const pageHeight = doc.internal.pageSize.height // Get page height
+      const pageHeight = doc.internal.pageSize.height // Page height for handling overflow
       let currentY = 20
 
       const addNewPageIfNeeded = (currentY, doc) => {
@@ -374,7 +263,7 @@ export default {
       // Title
       doc.setFontSize(20)
       doc.setFont('helvetica', 'bold')
-      doc.setTextColor(160, 132, 88) // Gold color (A08458)
+      doc.setTextColor(160, 132, 88) // Gold color
       doc.text('Booking Details', marginLeft, currentY)
       currentY += 15
 
@@ -392,87 +281,78 @@ export default {
         startY: currentY,
         head: [generalDetails[0]],
         body: generalDetails.slice(1),
-        styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] }, // Darker shade (966B47)
-        headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] }, // Gold Header (A08458)
+        styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] }, // Darker Brown
+        headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] }, // Gold Header
         alternateRowStyles: { fillColor: [245, 235, 215] } // Light Beige Rows
       })
       currentY = doc.lastAutoTable.finalY + 10
 
-      // Adventures Section
-      if (booking.type === 'adventure' && booking.adventures) {
-        const adventure = booking.adventures
+      // Hotel Details
+      if (booking.type === 'hotel' && booking.hotel) {
+        const hotel = booking.hotel
         doc.setFontSize(16)
-        doc.setTextColor(160, 132, 88) // Gold color (A08458)
-        doc.text('Adventure Details', marginLeft, currentY)
-        currentY += 10
-
-        const adventureDetails = [
-          ['Field', 'Details'],
-          ['Overview', this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Intro', this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Itinerary', this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Includes', JSON.parse(adventure.includes || '[]').join('\n- ') || 'N/A'],
-          ['Excludes', JSON.parse(adventure.excludes || '[]').join('\n- ') || 'N/A'],
-          ['Activity Type', adventure.activity_type || 'N/A']
-        ]
-        doc.autoTable({
-          startY: currentY,
-          head: [adventureDetails[0]],
-          body: adventureDetails.slice(1),
-          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
-          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
-          alternateRowStyles: { fillColor: [245, 235, 215] }
-        })
-        currentY = doc.lastAutoTable.finalY + 10
-      }
-
-      // Cruise Section
-      if (booking.type === 'cruise' && booking.cruise) {
-        const cruise = booking.cruise
-        doc.setFontSize(16)
-        doc.setTextColor(160, 132, 88) // Gold color (A08458)
-        doc.text('Cruise Details', marginLeft, currentY)
-        currentY += 10
-
-        const cruiseDetails = [
-          ['Field', 'Details'],
-          ['Name', this.decodeHtmlEntities(cruise.name || 'N/A')],
-          ['Cruise Line', this.decodeHtmlEntities(cruise.cruise_line || 'N/A')],
-          ['Ship Name', this.decodeHtmlEntities(cruise.ship_name || 'N/A')],
-          ['Stars', cruise.stars?.toString() || 'N/A'],
-          ['Number of Nights', cruise.number_of_nights?.toString() || 'N/A'],
-          ['Facilities', cruise.facilities?.join('\n- ') || 'N/A'],
-          ['Policies', cruise.policies?.join('\n- ') || 'N/A'],
-          ['Includes', cruise.includes?.join('\n- ') || 'N/A'],
-          ['Excludes', cruise.excludes?.join('\n- ') || 'N/A']
-        ]
-        doc.autoTable({
-          startY: currentY,
-          head: [cruiseDetails[0]],
-          body: cruiseDetails.slice(1),
-          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
-          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
-          alternateRowStyles: { fillColor: [245, 235, 215] }
-        })
-        currentY = doc.lastAutoTable.finalY + 10
-
-        // Add Description
-        currentY = addNewPageIfNeeded(currentY, doc)
-        doc.setFontSize(10)
         doc.setTextColor(160, 132, 88) // Gold color
-        doc.text('Cruise Description', marginLeft, currentY)
+        doc.text('Hotel Details', marginLeft, currentY)
         currentY += 10
 
-        currentY = addNewPageIfNeeded(currentY, doc)
-        doc.setFontSize(10)
-        doc.setTextColor('#966B47') // Darker shade (966B47)
-        const description = this.decodeHtmlEntities(cruise.description?.replace(/<[^>]*>/g, '') || 'N/A')
-        const lines = doc.splitTextToSize(description, 190)
-        lines.forEach((line) => {
-          currentY = addNewPageIfNeeded(currentY, doc)
-          doc.text(line, marginLeft, currentY)
-          currentY += 8
+        const hotelDetails = [
+          ['Field', 'Details'],
+          ['Hotel Name', this.decodeHtmlEntities(hotel.hotel_name || 'N/A')],
+          ['Address', this.decodeHtmlEntities(hotel.address || 'N/A')],
+          ['Locator', hotel.locator || 'N/A'],
+          ['Room Type', this.decodeHtmlEntities(hotel.room_type || 'N/A')],
+          ['Check-In', hotel.check_in || 'N/A'],
+          ['Check-Out', hotel.check_out || 'N/A'],
+          ['Total Price', hotel.total_price || 'N/A'],
+          ['Board Type', this.decodeHtmlEntities(hotel.board_type || 'N/A')]
+        ]
+        doc.autoTable({
+          startY: currentY,
+          head: [hotelDetails[0]],
+          body: hotelDetails.slice(1),
+          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
+          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+          alternateRowStyles: { fillColor: [245, 235, 215] }
         })
+        currentY = doc.lastAutoTable.finalY + 10
+
+        // Add Cancellation Policy
+        if (hotel.cancellation_policy) {
+          currentY = addNewPageIfNeeded(currentY, doc)
+          doc.setFontSize(10)
+          doc.setTextColor(160, 132, 88) // Gold color
+          doc.text('Cancellation Policy', marginLeft, currentY)
+          currentY += 10
+
+          const policyText = this.decodeHtmlEntities(
+            hotel.cancellation_policy.replace(/<[^>]*>/g, '') || 'N/A'
+          )
+          const lines = doc.splitTextToSize(policyText, 190)
+          lines.forEach((line) => {
+            currentY = addNewPageIfNeeded(currentY, doc)
+            doc.text(line, marginLeft, currentY)
+            currentY += 8
+          })
+        }
+
+        // Add Comments
+        if (hotel.comments) {
+          currentY = addNewPageIfNeeded(currentY, doc)
+          doc.setFontSize(10)
+          doc.setTextColor(160, 132, 88) // Gold color
+          doc.text('Other', marginLeft, currentY)
+          currentY += 10
+
+          const commentsText = this.decodeHtmlEntities(
+            hotel.comments.replace(/<[^>]*>/g, '') || 'N/A'
+          )
+          const lines = doc.splitTextToSize(commentsText, 190)
+          lines.forEach((line) => {
+            currentY = addNewPageIfNeeded(currentY, doc)
+            doc.text(line, marginLeft, currentY)
+            currentY += 8
+          })
+        }
       }
 
       // Save PDF

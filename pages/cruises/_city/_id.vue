@@ -95,8 +95,13 @@
                 <div class="gallery-container mb-3">
                   <!-- Main Image Display -->
                   <div class="main-image-container mb-2">
-                    <v-img :src="currentMainImage" class="main-image" contain />
-                    <v-btn
+                    <v-img
+                      :src="currentMainImage"
+                      class="main-image"
+                      contain
+                      :height="$vuetify.breakpoint.mdAndUp ? '500px' : '300px'"
+                      :max-width="$vuetify.breakpoint.smAndDown ? '100%' : '600px'"
+                    />                    <v-btn
                       icon
                       class="scroll-btn-left"
                       @click="prevImage"
@@ -730,15 +735,13 @@ export default {
 
 .main-image-container {
   position: relative;
-  width: 400px; /* Fixed width for the frame */
-  height: 300px; /* Fixed height for the frame */
-  overflow: hidden;
-  border-radius: 8px;
-  background-color: #f7f3ef; /* Light background for better appearance */
-  display: flex; /* Enable flexbox */
-  justify-content: center; /* Horizontally center the image */
-  align-items: center; /* Vertically center the image */
-  margin: 0 auto; /* Center the container itself within the page */
+  width: 100%; /* Make sure it takes full width */
+  max-width: 100%; /* Prevent overflow beyond parent */
+  height: auto; /* Let the height adjust proportionally */
+  overflow: hidden; /* Ensure no content spills out */
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
 }
 
 .main-image {
