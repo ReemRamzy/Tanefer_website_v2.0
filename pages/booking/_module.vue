@@ -751,12 +751,15 @@ export default {
         this.noData = true
         this.loaded = false
       }
-    } else if (this.$route.module === 'cruise') {
+    } else if (this.$route.params.module === 'cruise') {
       this.numberOfPassenger = this.$store.state.cruiseGuests
       this.noData = false
       this.loaded = false
+
       if (this.$route.query.response_message && this.$route.query.response_message === 'Success') {
-        this.confirmBooking()
+        if (!this.isCruiseConfirmed()) {
+          this.confirmBooking()
+        }
         this.confirmPhase = true
         this.succesfullPayment = true
       } else if (this.$route.query.response_message) {

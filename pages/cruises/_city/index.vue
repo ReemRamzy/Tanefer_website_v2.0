@@ -20,11 +20,11 @@
         <v-card v-for="item in cruises" :key="item.id" max-width="1200" class="mb-5 px-3 mx-auto">
           <v-row>
             <v-col cols="12" md="5">
-              <v-img :src="item.master_image" height="270" class="rounded" />
+              <v-img :src="item.master_image" width="100%" height="100%" class="rounded" />
             </v-col>
             <v-col cols="12" md="7" class="d-flex flex-column justify-space-between">
               <v-card-title class="d-flex justify-space-between flex-wrap align-cener px-0 py-0">
-                {{ item.name }} test
+                {{ item.name }}
                 <v-rating
                   background-color="green lighten-2"
                   color="warning"
@@ -180,7 +180,7 @@
           </div> -->
           <div v-if="cruise.includes.length">
             <p class="text-h6">
-              Includes test test
+              Includes
             </p>
             <v-chip v-for="(item, i) in cruise.includes" :key="i" class="ma-1 mobile-chip-font">
               {{ item }}

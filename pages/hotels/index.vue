@@ -2228,10 +2228,8 @@ export default {
         hotelOptions.forEach((roomOption) => {
           let board = roomOption.Board?._ || 'Board not available'
 
-          // Normalize board names
           board = board.toLowerCase().replace(/&/g, 'and').trim()
 
-          // Apply synonym mapping
           board = synonymMapping[board] || board
           // console.log(board)
           if (boardCounts[board]) {
@@ -2341,15 +2339,35 @@ export default {
           return matchesNumericRating || matchesDescriptiveCategory
         })
       }
+      // if (this.selectedBoards.length > 0) {
+      //   this.calculateBoardOptions()
+      //   filtered = filtered.filter((hotel) => {
+      //     let hotelOptions = hotel?.HotelOptions?.HotelOption
+      //     if (!Array.isArray(hotelOptions)) {
+      //       hotelOptions = [hotelOptions]
+      //     }
+      //     return hotelOptions.some(roomOption => this.selectedBoards.includes(roomOption?.Board?._))
+      //   })
+      // }
       if (this.selectedBoards.length > 0) {
         filtered = filtered.filter((hotel) => {
           let hotelOptions = hotel?.HotelOptions?.HotelOption
           if (!Array.isArray(hotelOptions)) {
             hotelOptions = [hotelOptions]
           }
-          return hotelOptions.some(roomOption => this.selectedBoards.includes(roomOption?.Board?._))
+
+          return hotelOptions.some((roomOption) => {
+            let board = roomOption?.Board?._ || 'Board not available'
+            board = board.toLowerCase().replace(/&/g, 'and').trim()
+            board = this.synonymMapping[board] || board
+
+            return this.selectedBoards.includes(board)
+          })
         })
+
+        this.calculateBoardOptions()
       }
+
       if (this.priceRange[0] !== null && this.priceRange[1] !== null) {
         filtered = filtered.filter((hotel) => {
           let hotelOptions = hotel?.HotelOptions?.HotelOption
