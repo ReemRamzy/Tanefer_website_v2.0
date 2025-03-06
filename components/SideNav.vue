@@ -19,14 +19,15 @@
           rel="noopener noreferrer"
           active-class="w--current"
           class="nav-link w-nav-link"
+          @click="$emit('close')"
         >Flights</a>
-        <NuxtLink to="/hotels" exact active-class="w--current" class="nav-link w-nav-link">
+        <NuxtLink to="/hotels" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
           Hotels
         </NuxtLink>
-        <NuxtLink to="/cruises" exact active-class="w--current" class="nav-link w-nav-link">
+        <NuxtLink to="/cruises" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
           Nile cruises
         </NuxtLink>
-        <NuxtLink to="/trips" exact active-class="w--current" class="nav-link w-inline-block">
+        <NuxtLink to="/trips" exact active-class="w--current" class="nav-link w-inline-block" @click="$emit('close')">
           <div class="hot">
             <div>Pick & Custom your trip</div>
             <div class="hot-pointer" />
@@ -35,7 +36,7 @@
             </div>
           </div>
         </NuxtLink>
-        <NuxtLink to="/adventures" exact active-class="w--current" class="nav-link w-nav-link">
+        <NuxtLink to="/adventures" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
           Adventures
         </NuxtLink>
         <a
@@ -43,6 +44,7 @@
           rel="noopener noreferrer"
           active-class="w--current"
           class="nav-link w-nav-link"
+          @click="$emit('close')"
         >Blogs</a>
         <div :key="isAuthenticated">
           <div v-if="isAuthenticated" class="dropdown">
@@ -50,13 +52,13 @@
               Hi, {{ username }}
             </button> -->
             <div class="dropdown-menu">
-              <NuxtLink to="/profile" exact active-class="w--current" class="nav-link w-nav-link">
+              <NuxtLink to="/profile" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
                 Profile
               </NuxtLink>
-              <NuxtLink to="/bookingHistory" exact active-class="w--current" class="nav-link w-nav-link">
+              <NuxtLink to="/bookingHistory" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
                 Booking History
               </NuxtLink>
-              <NuxtLink to="/change-password" exact active-class="w--current" class="nav-link w-nav-link">
+              <NuxtLink to="/change-password" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
                 Change Password
               </NuxtLink>
               <a exact active-class="w--current" class="nav-link w-nav-link" @click="logout">
@@ -65,7 +67,7 @@
             </div>
           </div>
           <div v-else class="login-container">
-            <NuxtLink to="/login" exact active-class="w--current" class="nav-link w-nav-link">
+            <NuxtLink to="/login" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
               Login
             </NuxtLink>
           </div>
@@ -92,6 +94,7 @@ export default {
     async logout () {
       try {
         await this.$store.dispatch('auth/logout')
+        this.$emit('close')
       } catch (error) {
       }
     }
