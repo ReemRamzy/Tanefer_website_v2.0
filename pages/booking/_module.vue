@@ -1041,10 +1041,11 @@ export default {
           // form.insertAdjacentHTML('beforeend', `<input type="hidden" name="url" value="${window.location.origin + '/booking/cruise'}">`)
           // form.submit()
           this.loading = false
-          this.snackbar = true
-          this.color = '#4f3316'
+          // this.snackbar = true
+          // this.color = '#4f3316'
           // this.text = 'Cruise Booked Successfully so please wait for acceptance your booking from management and sent the acceptance to your email soon to pay online'
-          this.text = customTextMessage
+          // this.text = customTextMessage
+          this.showSnackbar(customTextMessage, '#4f3316', true, true)
         } else if (this.$route.params.module === 'hotel') {
           const promise = hotelsServices.saveHotel(body)
           const response = await promise

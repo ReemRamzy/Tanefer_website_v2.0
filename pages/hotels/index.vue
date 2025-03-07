@@ -1526,6 +1526,78 @@ export default {
         last_page: 1,
         per_page: 100,
         total: 0
+      },
+      synonymMapping: {
+        'room only': 'Room only',
+        'ROOM ONLY': 'Room only',
+        'Room Only': 'Room only',
+        'breakfast for 1': 'Half Board',
+        'breakfast for 2': 'Half Board',
+        'breakfast buffet': 'Half Board',
+        'breakfast board': 'Half Board',
+        'breakfast for one guest': 'Half Board',
+        'breakfast for two guests': 'Half Board',
+        'continental breakfast': 'Half Board',
+        'half board': 'Half Board',
+        'all-inclusive (food/beverages/snacks)': 'All inclusive',
+        'full board': 'Full Board',
+        'room only (breakfast for two guests)': 'Half Board',
+        'room only (breakfast for 2)': 'Half Board',
+        'room only (breakfast for 1)': 'Half Board',
+        'room only with breakfast for 2': 'room only (breakfast for 2)',
+        'bed & breakfast': 'Bed & Breakfast',
+        'BED & BREAKFAST': 'Bed & Breakfast',
+        'Bed & Breakfast': 'Bed & Breakfast',
+        'bed and breakfast': 'Bed & Breakfast',
+        'breakfast for two': 'Bed & Breakfast',
+        // eslint-disable-next-line quote-props
+        'bedandbreakfast': 'Bed & Breakfast',
+        'half board (half board (buffet dinner))': 'Half Board',
+        'BED AND BREAKFAST': 'Bed & Breakfast',
+        'Bed and Breakfast': 'Bed & Breakfast',
+
+        'bed and breakfast (full breakfast)': 'Bed & Breakfast',
+        'BED AND BREAKFAST (FULL BREAKFAST)': 'Bed & Breakfast',
+
+        'full breakfast': 'Half Board',
+        'hb (breakfast+dinner)': 'Half Board',
+        'full Breakfast': 'Half Board',
+        'Full Breakfast': 'Half Board',
+        'FULL BREAKFAST': 'Half Board',
+
+        'free breakfast': 'Half Board',
+        'Free Breakfast': 'Half Board',
+        'FREE BREAKFAST': 'Half Board',
+        'buffet breakfast': 'Half Board',
+        'Buffet Breakfast': 'Half Board',
+        'buffet breakfast (free breakfast)': 'Half Board',
+        'buffet breakfast (buffet dinner)': 'Half Board',
+        'buffet breakfast (free breakfast and buffet dinner)': 'Half Board',
+        'buffet dinner': 'Half Board',
+        'Buffet Dinner': 'Half Board',
+        'buffet dinner (free breakfast)': 'Half Board',
+        'breakfast included': 'Half Board',
+        'buffet dinner (buffet breakfast)': 'Half Board',
+        'buffet dinner (free breakfast and buffet breakfast)': 'Half Board',
+        // eslint-disable-next-line quote-props
+        'breakfast': 'Half Board',
+        // eslint-disable-next-line quote-props
+        'Breakfast': 'Half Board',
+        'breakfast (free breakfast)': 'Half Board',
+        'breakfast (buffet dinner)': 'Half Board',
+
+        'room only (free breakfast)': 'Half Board',
+        'Room Only (Free Breakfast)': 'Half Board',
+        'room only (free dinner)': 'Half Board',
+        'room and breakfast': 'Half Board',
+        'half board (buffet dinner)': 'Half Board',
+        '2-for-1 buffet': 'Half Board',
+        'bed and breakfast (continental breakfast)': 'Bed & Breakfast',
+
+        'bed and breakfast (breakfast buffet)': 'Half Board',
+        'Bed and Breakfast (Breakfast Buffet)': 'Half Board',
+
+        'board not available': 'board not available'
       }
     }
   },
@@ -2147,77 +2219,6 @@ export default {
     },
     calculateBoardOptions () {
       const boardCounts = {}
-      const synonymMapping = {
-        // Normalize capitalization and special characters
-        'room only': 'Room only',
-        'ROOM ONLY': 'Room only',
-        'Room Only': 'Room only',
-        'breakfast for 1': 'Half Board',
-        'breakfast for 2': 'Half Board',
-        'breakfast buffet': 'Half Board',
-        'breakfast board': 'Half Board',
-        'breakfast for one guest': 'Half Board',
-        'breakfast for two guests': 'Half Board',
-        'continental breakfast': 'Half Board',
-        'half board': 'Half Board',
-        'all-inclusive (food/beverages/snacks)': 'All inclusive',
-        'full board': 'Full Board',
-        'room only (breakfast for two guests)': 'Half Board',
-        'room only (breakfast for 2)': 'Half Board',
-        'room only (breakfast for 1)': 'Half Board',
-        'room only with breakfast for 2': 'room only (breakfast for 2)',
-        'bed & breakfast': 'Bed & Breakfast',
-        'BED & BREAKFAST': 'Bed & Breakfast',
-        'Bed & Breakfast': 'Bed & Breakfast',
-        'bed and breakfast': 'Bed & Breakfast',
-        // eslint-disable-next-line quote-props
-        'bedandbreakfast': 'Bed & Breakfast',
-        'half board (half board (buffet dinner))': 'Half Board',
-        'BED AND BREAKFAST': 'Bed & Breakfast',
-        'Bed and Breakfast': 'Bed & Breakfast',
-
-        'bed and breakfast (full breakfast)': 'Bed & Breakfast',
-        'BED AND BREAKFAST (FULL BREAKFAST)': 'Bed & Breakfast',
-
-        'full breakfast': 'Half Board',
-        'hb (breakfast+dinner)': 'Half Board',
-        'full Breakfast': 'Half Board',
-        'Full Breakfast': 'Half Board',
-        'FULL BREAKFAST': 'Half Board',
-
-        'free breakfast': 'Half Board',
-        'Free Breakfast': 'Half Board',
-        'FREE BREAKFAST': 'Half Board',
-        'buffet breakfast': 'Half Board',
-        'Buffet Breakfast': 'Half Board',
-        'buffet breakfast (free breakfast)': 'Half Board',
-        'buffet breakfast (buffet dinner)': 'Half Board',
-        'buffet breakfast (free breakfast and buffet dinner)': 'Half Board',
-        'buffet dinner': 'Half Board',
-        'Buffet Dinner': 'Half Board',
-        'buffet dinner (free breakfast)': 'Half Board',
-        'buffet dinner (buffet breakfast)': 'Half Board',
-        'buffet dinner (free breakfast and buffet breakfast)': 'Half Board',
-        // eslint-disable-next-line quote-props
-        'breakfast': 'Half Board',
-        // eslint-disable-next-line quote-props
-        'Breakfast': 'Half Board',
-        'breakfast (free breakfast)': 'Half Board',
-        'breakfast (buffet dinner)': 'Half Board',
-
-        'room only (free breakfast)': 'Half Board',
-        'Room Only (Free Breakfast)': 'Half Board',
-        'room only (free dinner)': 'Half Board',
-        'room and breakfast': 'Half Board',
-        'half board (buffet dinner)': 'Half Board',
-        '2-for-1 buffet': 'Half Board',
-        'bed and breakfast (continental breakfast)': 'Bed & Breakfast',
-
-        'bed and breakfast (breakfast buffet)': 'Half Board',
-        'Bed and Breakfast (Breakfast Buffet)': 'Half Board',
-
-        'board not available': 'board not available'
-      }
       this.filteredHotels.forEach((hotel) => {
         let hotelOptions = hotel.HotelOptions.HotelOption
 
@@ -2230,8 +2231,7 @@ export default {
 
           board = board.toLowerCase().replace(/&/g, 'and').trim()
 
-          board = synonymMapping[board] || board
-          // console.log(board)
+          board = this.synonymMapping[board] || board
           if (boardCounts[board]) {
             boardCounts[board]++
           } else {
@@ -2364,8 +2364,6 @@ export default {
             return this.selectedBoards.includes(board)
           })
         })
-
-        this.calculateBoardOptions()
       }
 
       if (this.priceRange[0] !== null && this.priceRange[1] !== null) {
@@ -2382,8 +2380,8 @@ export default {
           })
         })
       }
-
       this.filteredHotels = filtered
+      this.calculateBoardOptions()
     },
 
     toggleRoomDisplay (hotelIndex) {
