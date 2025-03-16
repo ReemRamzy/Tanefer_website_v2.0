@@ -1,10 +1,11 @@
 <template>
   <div
+    v-if="isOpen"
     id="w-nav-overlay-0"
     class="w-nav-overlay"
     data-wf-ignore=""
     style="height: 100%; display: block; width: 100%; z-index: 1000; background-color: rgba(0,0,0,0.2); top: 0;"
-    @click.self="$emit('close')"
+    @click.self="closeMenu"
   >
     <nav
       role="navigation"
@@ -17,17 +18,19 @@
           href="https://flights.tanefer.com/"
           target="_blank"
           rel="noopener noreferrer"
-          active-class="w--current"
           class="nav-link w-nav-link"
-          @click="$emit('close')"
+          @click="closeMenu"
         >Flights</a>
-        <NuxtLink to="/hotels" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+
+        <NuxtLink to="/hotels" exact class="nav-link w-nav-link" @click.native="closeMenu">
           Hotels
         </NuxtLink>
-        <NuxtLink to="/cruises" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+
+        <NuxtLink to="/cruises" exact class="nav-link w-nav-link" @click.native="closeMenu">
           Nile cruises
         </NuxtLink>
-        <NuxtLink to="/trips" exact active-class="w--current" class="nav-link w-inline-block" @click="$emit('close')">
+
+        <NuxtLink to="/trips" exact class="nav-link w-inline-block" @click.native="closeMenu">
           <div class="hot">
             <div>Pick & Custom your trip</div>
             <div class="hot-pointer" />
@@ -36,38 +39,41 @@
             </div>
           </div>
         </NuxtLink>
-        <NuxtLink to="/adventures" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+
+        <NuxtLink to="/adventures" exact class="nav-link w-nav-link" @click.native="closeMenu">
           Adventures
         </NuxtLink>
+
         <a
           href="https://tanefer.com/blog/"
           rel="noopener noreferrer"
-          active-class="w--current"
           class="nav-link w-nav-link"
-          @click="$emit('close')"
+          @click="closeMenu"
         >Blogs</a>
+
         <div :key="isAuthenticated">
           <div v-if="isAuthenticated" class="dropdown">
-            <!-- <button class="dropdown-button">
-              Hi, {{ username }}
-            </button> -->
             <div class="dropdown-menu">
-              <NuxtLink to="/profile" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+              <NuxtLink to="/profile" exact class="nav-link w-nav-link" @click.native="closeMenu">
                 Profile
               </NuxtLink>
-              <NuxtLink to="/bookingHistory" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+
+              <NuxtLink to="/bookingHistory" exact class="nav-link w-nav-link" @click.native="closeMenu">
                 Booking History
               </NuxtLink>
-              <NuxtLink to="/change-password" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+
+              <NuxtLink to="/change-password" exact class="nav-link w-nav-link" @click.native="closeMenu">
                 Change Password
               </NuxtLink>
-              <a exact active-class="w--current" class="nav-link w-nav-link" @click="logout">
+
+              <a class="nav-link w-nav-link" @click="logout">
                 Logout
               </a>
             </div>
           </div>
+
           <div v-else class="login-container">
-            <NuxtLink to="/login" exact active-class="w--current" class="nav-link w-nav-link" @click="$emit('close')">
+            <NuxtLink to="/login" exact class="nav-link w-nav-link" @click.native="closeMenu">
               Login
             </NuxtLink>
           </div>
@@ -79,29 +85,29 @@
 
 <script>
 export default {
+  data () {
+    return {
+      isOpen: true // Menu starts open
+    }
+  },
   computed: {
     isAuthenticated () {
       return this.$store.getters['auth/isAuthenticated']
-    },
-    user () {
-      return this.$store.getters['auth/user']
     },
     username () {
       return this.$store.getters['auth/user']?.username || 'User'
     }
   },
   methods: {
+    closeMenu () {
+      this.isOpen = false
+    },
     async logout () {
       try {
         await this.$store.dispatch('auth/logout')
-        this.$emit('close')
-      } catch (error) {
-      }
+        this.closeMenu()
+      } catch (error) {}
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

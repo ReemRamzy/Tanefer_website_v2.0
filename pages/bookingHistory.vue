@@ -290,6 +290,8 @@ export default {
       // Hotel Details
       if (booking.type === 'hotel' && booking.hotel) {
         const hotel = booking.hotel
+        currentY = addNewPageIfNeeded(currentY, doc)
+
         doc.setFontSize(16)
         doc.setTextColor(160, 132, 88) // Gold color
         doc.text('Hotel Details', marginLeft, currentY)
@@ -355,8 +357,88 @@ export default {
         }
       }
 
+      // Adventures Section
+      if (booking.type === 'adventure' && booking.adventures) {
+        const adventure = booking.adventures
+        doc.setFontSize(16)
+        doc.setTextColor(160, 132, 88) // Gold color (A08458)
+        doc.text('Adventure Details', marginLeft, currentY)
+        currentY += 10
+
+        const adventureDetails = [
+          ['Field', 'Details'],
+          ['Overview', this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
+          ['Intro', this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
+          ['Itinerary', this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
+          ['Includes', JSON.parse(adventure.includes || '[]').join('\n- ') || 'N/A'],
+          ['Excludes', JSON.parse(adventure.excludes || '[]').join('\n- ') || 'N/A'],
+          ['Activity Type', adventure.activity_type || 'N/A']
+        ]
+        doc.autoTable({
+          startY: currentY,
+          head: [adventureDetails[0]],
+          body: adventureDetails.slice(1),
+          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
+          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+          alternateRowStyles: { fillColor: [245, 235, 215] }
+        })
+        currentY = doc.lastAutoTable.finalY + 10
+      }
+
+      // Cruise Section
+      if (booking.type === 'cruise' && booking.cruise) {
+        const cruise = booking.cruise
+        doc.setFontSize(16)
+        doc.setTextColor(160, 132, 88) // Gold color (A08458)
+        doc.text('Cruise Details', marginLeft, currentY)
+        currentY += 10
+
+        const cruiseDetails = [
+          ['Field', 'Details'],
+          ['Name', this.decodeHtmlEntities(cruise.name || 'N/A')],
+          ['Cruise Line', this.decodeHtmlEntities(cruise.cruise_line || 'N/A')],
+          ['Ship Name', this.decodeHtmlEntities(cruise.ship_name || 'N/A')],
+          ['Stars', cruise.stars?.toString() || 'N/A'],
+          ['Number of Nights', cruise.number_of_nights?.toString() || 'N/A'],
+          ['Facilities', cruise.facilities?.join('\n- ') || 'N/A'],
+          ['Policies', cruise.policies?.join('\n- ') || 'N/A'],
+          ['Includes', cruise.includes?.join('\n- ') || 'N/A'],
+          ['Excludes', cruise.excludes?.join('\n- ') || 'N/A']
+        ]
+        doc.autoTable({
+          startY: currentY,
+          head: [cruiseDetails[0]],
+          body: cruiseDetails.slice(1),
+          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
+          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+          alternateRowStyles: { fillColor: [245, 235, 215] }
+        })
+        currentY = doc.lastAutoTable.finalY + 10
+
+        // Add Description
+        currentY = addNewPageIfNeeded(currentY, doc)
+        doc.setFontSize(10)
+        doc.setTextColor(160, 132, 88) // Gold color
+        doc.text('Cruise Description', marginLeft, currentY)
+        currentY += 10
+
+        currentY = addNewPageIfNeeded(currentY, doc)
+        doc.setFontSize(10)
+        doc.setTextColor('#966B47') // Darker shade (966B47)
+        const description = this.decodeHtmlEntities(cruise.description?.replace(/<[^>]*>/g, '') || 'N/A')
+        const lines = doc.splitTextToSize(description, 190)
+        lines.forEach((line) => {
+          currentY = addNewPageIfNeeded(currentY, doc)
+          doc.text(line, marginLeft, currentY)
+          currentY += 8
+        })
+      }
+
       // Save PDF
-      doc.save(`${this.decodeHtmlEntities(booking.title) || 'Booking'}.pdf`)
+      // doc.save(`${this.decodeHtmlEntities(booking.title) || 'Booking'}.pdf`)
+      const pdfBlob = doc.output('blob')
+      const pdfUrl = URL.createObjectURL(pdfBlob)
+      window.open(pdfUrl, '_blank')
     }
 
   }
