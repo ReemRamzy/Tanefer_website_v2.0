@@ -8,6 +8,7 @@
       <nuxt :key="$route.fullPath" />
     </v-main>
     <site-footer />
+    <FloatingWhatsappIcon />
   </v-app>
 </template>
 
@@ -16,13 +17,15 @@ import { mapState, mapActions } from 'vuex'
 import SiteNavBar from '../components/SiteNavBar'
 import SiteFooter from '../components/SiteFooter'
 import LoadingScreen from '../components/LoadingScreen'
+import FloatingWhatsappIcon from '../components/FloatingWhatsappIcon.vue'
 
 export default {
   name: 'DefaultLayout',
   components: {
     SiteNavBar,
     SiteFooter,
-    LoadingScreen
+    LoadingScreen,
+    FloatingWhatsappIcon
   },
   beforeRouteEnter (to, from, next) {
     next((vm) => {

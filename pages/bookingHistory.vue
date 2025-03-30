@@ -358,33 +358,112 @@ export default {
       }
 
       // Adventures Section
-      if (booking.type === 'adventure' && booking.adventures) {
-        const adventure = booking.adventures
+      // *** Adventure Booking ***
+      if (booking.type === 'adventure' && Array.isArray(booking.adventures) && booking.adventures.length) {
         doc.setFontSize(16)
-        doc.setTextColor(160, 132, 88) // Gold color (A08458)
+        doc.setTextColor(160, 132, 88)
         doc.text('Adventure Details', marginLeft, currentY)
         currentY += 10
+        currentY = addNewPageIfNeeded(currentY, doc)
+        booking.adventures.forEach((adventure, index) => {
+          doc.setFontSize(12)
+          doc.setTextColor(139, 69, 19)
+          doc.text(`${index + 1}. ${this.decodeHtmlEntities(adventure.title)}`, marginLeft, currentY)
+          currentY += 8
+          currentY = addNewPageIfNeeded(currentY, doc)
+          const adventureDetails = [
+            ['Overview', this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
+            ['Intro', this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
+            ['Itinerary', this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
+            ['Includes', adventure.includes ? JSON.parse(adventure.includes).join('\n- ') : 'N/A'],
+            ['Excludes', adventure.excludes ? JSON.parse(adventure.excludes).join('\n- ') : 'N/A'],
+            ['Activity Type', adventure.activity_type || 'N/A'],
+            ['Start Time', adventure.start_time || 'N/A'],
+            ['End Time', adventure.end_time || 'N/A']
+          ]
 
-        const adventureDetails = [
-          ['Field', 'Details'],
-          ['Overview', this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Intro', this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Itinerary', this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
-          ['Includes', JSON.parse(adventure.includes || '[]').join('\n- ') || 'N/A'],
-          ['Excludes', JSON.parse(adventure.excludes || '[]').join('\n- ') || 'N/A'],
-          ['Activity Type', adventure.activity_type || 'N/A']
-        ]
-        doc.autoTable({
-          startY: currentY,
-          head: [adventureDetails[0]],
-          body: adventureDetails.slice(1),
-          styles: { fontSize: 10, cellPadding: 3, textColor: ['#966B47'] },
-          headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
-          alternateRowStyles: { fillColor: [245, 235, 215] }
+          doc.autoTable({
+            startY: currentY,
+            body: adventureDetails,
+            styles: { fontSize: 10, cellPadding: 3, textColor: [139, 69, 19] },
+            headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+            alternateRowStyles: { fillColor: [245, 235, 215] }
+          })
+
+          currentY = doc.lastAutoTable.finalY + 10
+          currentY = addNewPageIfNeeded(currentY, doc)
         })
-        currentY = doc.lastAutoTable.finalY + 10
       }
 
+      // Package Section
+      if (booking.type === 'package') {
+        doc.setFontSize(16)
+        doc.setTextColor(160, 132, 88)
+        doc.text('Package Details', marginLeft, currentY)
+        currentY += 10
+        currentY = addNewPageIfNeeded(currentY, doc)
+
+        if (booking.adventures?.length) {
+          doc.text('Adventures Included:', marginLeft, currentY)
+          currentY += 5
+          currentY = addNewPageIfNeeded(currentY, doc)
+
+          booking.adventures.forEach((adventure, index) => {
+            doc.setFontSize(12)
+            doc.setTextColor(139, 69, 19)
+            doc.text((index + 1) + '. ' + this.decodeHtmlEntities(adventure.title), marginLeft, currentY)
+            currentY += 8
+            currentY = addNewPageIfNeeded(currentY, doc)
+
+            const adventureDetails = [
+              ['Overview', this.decodeHtmlEntities(adventure.overview?.replace(/<[^>]*>/g, '') || 'N/A')],
+              ['Intro', this.decodeHtmlEntities(adventure.intro?.replace(/<[^>]*>/g, '') || 'N/A')],
+              ['Itinerary', this.decodeHtmlEntities(adventure.itinerary?.replace(/<[^>]*>/g, '') || 'N/A')],
+              ['Includes', JSON.parse(adventure.includes || '[]').join('\n- ') || 'N/A'],
+              ['Excludes', JSON.parse(adventure.excludes || '[]').join('\n- ') || 'N/A']
+            ]
+            doc.autoTable({
+              startY: currentY,
+              body: adventureDetails,
+              styles: { fontSize: 10, cellPadding: 3, textColor: [139, 69, 19] },
+              headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+              alternateRowStyles: { fillColor: [245, 235, 215] }
+            })
+            currentY = doc.lastAutoTable.finalY + 10
+            currentY = addNewPageIfNeeded(currentY, doc)
+          })
+        }
+
+        if (booking.hotels?.length) {
+          doc.text('Accommodation Details:', marginLeft, currentY)
+          currentY += 5
+          currentY = addNewPageIfNeeded(currentY, doc)
+
+          booking.hotels.forEach((hotel, index) => {
+            doc.setFontSize(12)
+            doc.setTextColor(139, 69, 19)
+            doc.text((index + 1) + '. ' + this.decodeHtmlEntities(hotel.hotel_name), marginLeft, currentY)
+            currentY += 8
+            currentY = addNewPageIfNeeded(currentY, doc)
+
+            const hotelDetails = [
+              ['Hotel Name', this.decodeHtmlEntities(hotel.hotel_name || 'N/A')],
+              ['Start Date', hotel.start_date || 'N/A'],
+              ['End Date', hotel.end_date || 'N/A'],
+              ['Locator', hotel.locator || 'N/A']
+            ]
+            doc.autoTable({
+              startY: currentY,
+              body: hotelDetails,
+              styles: { fontSize: 10, cellPadding: 3, textColor: [139, 69, 19] },
+              headStyles: { fillColor: [160, 132, 88], textColor: [255, 255, 255] },
+              alternateRowStyles: { fillColor: [245, 235, 215] }
+            })
+            currentY = doc.lastAutoTable.finalY + 10
+            currentY = addNewPageIfNeeded(currentY, doc)
+          })
+        }
+      }
       // Cruise Section
       if (booking.type === 'cruise' && booking.cruise) {
         const cruise = booking.cruise

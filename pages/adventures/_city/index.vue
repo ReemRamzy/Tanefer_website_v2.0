@@ -330,9 +330,21 @@
           </v-col>
         </v-row>
       </div>
-      <h4 v-else-if="!$fetchState.pending && !adventures.length" class="my-5 text-center">
+      <!-- <h4 v-else-if="!$fetchState.pending && !adventures.length" class="my-5 text-center">
         No published adventures available now!
+      </h4> -->
+      <h4 v-else-if="$fetchState.pending" class="my-5 text-center">
+        <div class="loading-spinner">
+          <v-progress-circular
+            indeterminate
+            color="#8b5e34"
+            size="24"
+          />
+        </div>
       </h4>
+      <!-- <h4 v-else-if="!adventures.length" class="my-5 text-center">
+        No published adventures available now!
+      </h4> -->
       <div v-else>
         <v-img max-width="200" class="blink-2 mx-auto" src="~/assets/images/tanfer.png" />
       </div>

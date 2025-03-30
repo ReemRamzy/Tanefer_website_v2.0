@@ -33,8 +33,11 @@ export default {
       { rel: 'stylesheet', type: 'text/css', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css' }
     ],
     script: [
-      { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js', body: true }
-      // { src: '~/asets/js/webflow.js', body: true }
+      {
+        src: 'https://code.jquery.com/jquery-3.7.1.min.js',
+        integrity: 'sha384-7DkE9Db1XxH3WB3Bi8HTDPsEbCNyyI3xWSdvz+I5tuE25z7Y3rZXDZYwTxXHf6eG',
+        crossorigin: 'anonymous'
+      }
     ]
   },
 
