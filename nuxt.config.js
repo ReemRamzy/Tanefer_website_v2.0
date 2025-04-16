@@ -34,9 +34,7 @@ export default {
     ],
     script: [
       {
-        src: 'https://code.jquery.com/jquery-3.7.1.min.js',
-        integrity: 'sha384-7DkE9Db1XxH3WB3Bi8HTDPsEbCNyyI3xWSdvz+I5tuE25z7Y3rZXDZYwTxXHf6eG',
-        crossorigin: 'anonymous'
+        src: 'https://code.jquery.com/jquery-3.7.1.min.js'
       }
     ]
   },
